@@ -28,5 +28,4 @@ Telegram бот для изучения языков программирова�
 - Pytest
 - Docker
 - K8s
-- Elasticsearch
 - Github Actions
