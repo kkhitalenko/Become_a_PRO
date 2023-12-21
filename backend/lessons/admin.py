@@ -30,11 +30,11 @@ class QuestionAdmin(admin.ModelAdmin):
 
     @admin.display(description='Тема')
     def topic(self, obj):
-        return (obj.lesson.topic)
+        return obj.lesson.topic
 
     @admin.display(description='Язык')
     def language(self, obj):
-        return (obj.lesson.topic.language)
+        return obj.lesson.topic.language
 
 
 @admin.register(Lesson)
@@ -62,7 +62,7 @@ class TopicAdmin(admin.ModelAdmin):
     @admin.display(description='Количество уроков')
     def lessons_qty(self, obj):
         qty = Lesson.objects.filter(topic=obj).count()
-        return get_link(obj, qty, 'topic',  'lesson')
+        return get_link(obj, qty, 'topic', 'lesson')
 
 
 @admin.register(Language)
@@ -73,4 +73,4 @@ class LanguageAdmin(admin.ModelAdmin):
     @admin.display(description='Количество тем')
     def topics_qty(self, obj):
         qty = Topic.objects.filter(language=obj).count()
-        return get_link(obj, qty, 'language',  'topic')
+        return get_link(obj, qty, 'language', 'topic')
