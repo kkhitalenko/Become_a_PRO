@@ -17,16 +17,19 @@ def get_link(obj, qty: int, category: str, subcategory: str):
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'text']
-    list_display_links = ['id', 'text']
+    list_display = ['text']
+    list_display_links = ['text']
+    search_fields = ['text']
+    list_per_page = 20
 
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'text', 'correct_option', 'lesson', 'topic',
-                    'language']
-    # list_filter = ['lesson']
-    list_display_links = ['id', 'text']
+    list_display = ['text', 'correct_option', 'lesson', 'topic', 'language']
+    list_filter = ['lesson', 'lesson__topic', 'lesson__topic__language']
+    list_display_links = ['text']
+    search_fields = ['text']
+    list_per_page = 20
 
     @admin.display(description='Тема')
     def topic(self, obj):
@@ -39,9 +42,11 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'questions_qty', 'topic', 'language']
-    list_display_links = ['id', 'name']
-    list_filter = ['topic']
+    list_display = ['name', 'questions_qty', 'topic', 'language']
+    list_display_links = ['name']
+    list_filter = ['topic', 'topic__language']
+    search_fields = ['name']
+    list_per_page = 20
 
     @admin.display(description='Язык')
     def language(self, obj):
@@ -55,9 +60,11 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'lessons_qty', 'language']
-    list_display_links = ['id', 'name']
+    list_display = ['name', 'lessons_qty', 'language']
+    list_display_links = ['name']
     list_filter = ['language']
+    search_fields = ['name']
+    list_per_page = 20
 
     @admin.display(description='Количество уроков')
     def lessons_qty(self, obj):
@@ -67,8 +74,8 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'description', 'topics_qty']
-    list_display_links = ['id', 'name']
+    list_display = ['name', 'description', 'topics_qty']
+    list_display_links = ['name']
 
     @admin.display(description='Количество тем')
     def topics_qty(self, obj):
