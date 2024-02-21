@@ -1,4 +1,4 @@
-<!-- ![foodgram_workflow](https://github.com/kkhitalenko/Foodgram/actions/workflows/main.yml/badge.svg) -->
+![Become_a_PRO_workflow](https://github.com/kkhitalenko/Become_a_PRO/actions/workflows/django.yml/badge.svg)
 
 # become a PRO
 Telegram бот для изучения языков программирования. С помощью данного бота можно изучать такие языки, как Python, Go и Rust. Возможно изучение как с нуля, так и с выбранной Вами темы. За каждое пройденное задание Вы получаете звёздочку, а так же ежедневно получаете 10 жизней, каждая из которых будет наглым образом отобрана, в случае совершения ошибки. После того, как жизни закончатся, Вы можете приобрести новые жизни за свои звёздочки или отправиться отдохнуть до следующего дня.
