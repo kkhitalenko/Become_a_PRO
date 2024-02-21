@@ -15,13 +15,12 @@ class Answer(models.Model):
 class Question(models.Model):
     lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE,
                                verbose_name='Урок',
-                               related_name='lesson_of_question')
+                               related_name='questions_of_lesson')
     text = models.TextField('Вопрос')
-    options = models.ManyToManyField(Answer, verbose_name='Варианты ответа',
-                                     related_name='options')
+    options = models.ManyToManyField(Answer, verbose_name='Варианты ответа')
     correct_option = models.ForeignKey(Answer, on_delete=models.PROTECT,
                                        verbose_name='Верный ответ',
-                                       related_name='correct_option')
+                                       related_name='questions_correct_option')
 
     class Meta:
         verbose_name = 'Вопрос'
@@ -33,7 +32,7 @@ class Question(models.Model):
 
 class Lesson(models.Model):
     topic = models.ForeignKey('Topic', on_delete=models.CASCADE,
-                              verbose_name='Тема', related_name='topic')
+                              verbose_name='Тема', related_name='lessons')
     name = models.CharField('Урок', max_length=50)
     theory = models.TextField('Теория')
 
@@ -47,7 +46,7 @@ class Lesson(models.Model):
 
 class Topic(models.Model):
     language = models.ForeignKey('Language', on_delete=models.CASCADE,
-                                 verbose_name='Язык', related_name='language')
+                                 verbose_name='Язык', related_name='topics')
     name = models.CharField('Тема', max_length=50)
 
     class Meta:
