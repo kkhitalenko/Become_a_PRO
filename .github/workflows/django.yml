@@ -1,28 +1,25 @@
 name: Django CI
 
-on:
-  push:
-    branches: [ "main" ]
+on: push
 
 jobs:
-  build:
+  linting:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
         python-version: 3.11
-        
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
       
-    - name: Install Dependencies
+    - name: Install linters
       run: |
         cd backend/
-        poetry install --no-interaction --no-root
-    - name: Run Tests 
+        python -m pip install flake8 isort
+    - name: Run linters
       run: |
-        python -m flake8 
+        flake8 . 
+        isort .
