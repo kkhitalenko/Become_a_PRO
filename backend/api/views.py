@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 
-from api.serializers import LanguageSerializer, TopicSerializer, LessonSerializer, QuestionSerializer
+from api.serializers import (LanguageSerializer, TopicSerializer,
+                             LessonSerializer, QuestionSerializer)
 from lessons.models import Language, Lesson, Topic, Question
 
 
