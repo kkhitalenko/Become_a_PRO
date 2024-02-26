@@ -22,4 +22,4 @@ jobs:
     - name: Run linters
       run: |
         flake8 . 
-        isort .
+        isort . --check-only
