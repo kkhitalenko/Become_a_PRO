@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from api.serializers import (LanguageSerializer, TopicSerializer,
-                             LessonSerializer, QuestionSerializer)
-from lessons.models import Language, Lesson, Topic, Question
+from api.serializers import (LanguageSerializer, LessonSerializer,
+                             QuestionSerializer, TopicSerializer)
+from lessons.models import Language, Lesson, Question, Topic
 
 
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
