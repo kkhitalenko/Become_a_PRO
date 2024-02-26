@@ -19,6 +19,7 @@ jobs:
       run: |
         cd backend/
         python -m pip install flake8 isort
-    - name: Run linters
+    - name: Run flake
       run: flake8 .
+    - name: Run isort
       run: isort . --check-only
