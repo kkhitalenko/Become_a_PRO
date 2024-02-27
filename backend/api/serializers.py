@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from lessons.models import Answer, Language, Lesson, Question, Topic
+from lessons.models import Language, Lesson, Question, Topic
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -25,15 +25,9 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ['topic', 'name', 'theory']
 
 
-class AnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Answer 
-        fields = ['text']
-
-
 class QuestionSerializer(serializers.ModelSerializer):
     lesson = serializers.CharField()
-    options = AnswerSerializer(many=True)
+    options = serializers.StringRelatedField(many=True)
     correct_option = serializers.CharField()
 
     class Meta:
