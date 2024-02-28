@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "bot"
+version = "0.1.0"
+description = ""
+authors = ["Екатерина Хиталенко <ekaterinakhitalenko@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.4.1"
+pydantic-settings = "^2.2.1"
+ruff = "^0.2.2"
+
+[tool.ruff]
+line-length = 79
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
