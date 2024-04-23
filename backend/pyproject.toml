@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 django = "^4.2.8"
 djangorestframework = "^3.14.0"
+django-debug-toolbar = "^4.3.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
