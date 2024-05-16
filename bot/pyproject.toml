@@ -42,6 +42,6 @@ extend-select = [
 
 [tool.ruff.lint.isort]
 lines-between-types = 1
-lines-after-imports = 2
+lines-after-imports = 1
 known-first-party = ["poetry"]
 known-third-party = ["poetry.core"]
