@@ -4,7 +4,8 @@ import os
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import CommandStart
-from bot import keyboards, messages
+
+from core import keyboards, messages
 
 TOKEN = os.getenv('TOKEN')
 
