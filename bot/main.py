@@ -3,27 +3,24 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters.command import Command
-from dotenv import load_dotenv
+from aiogram.filters.command import CommandStart
+from bot import keyboards, messages
 
-import bot.messages
-from bot.keyboards import languages_builder
+TOKEN = os.getenv('TOKEN')
 
-logging.basicConfig(level=logging.INFO)
-
-load_dotenv()
-tg_bot = Bot(os.getenv('token'))
 dp = Dispatcher()
 
 
-@dp.message(Command('start'))
+@dp.message(CommandStart())
 async def cmd_start(message: types.Message):
-    await message.answer(bot.messages.START_MESSAGE,
-                         reply_markup=languages_builder.as_markup())
+    await message.answer(messages.START_MESSAGE,
+                         reply_markup=keyboards.languages_builder.as_markup())
 
 
 async def main():
-    await dp.start_polling(tg_bot)
+    bot = Bot(token=TOKEN)
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
