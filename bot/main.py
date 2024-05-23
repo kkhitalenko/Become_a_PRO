@@ -4,6 +4,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 
+from core.commands import set_commands
 from core.handlers import router
 
 TOKEN = os.getenv('TOKEN')
@@ -14,7 +15,9 @@ dp.include_router(router)
 
 async def main():
     bot = Bot(token=TOKEN)
+    await set_commands(bot)
     await dp.start_polling(bot)
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
