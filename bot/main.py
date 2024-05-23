@@ -7,6 +7,7 @@ from aiogram import Bot, Dispatcher
 from core.commands import set_commands
 from core.handlers import router
 
+
 TOKEN = os.getenv('TOKEN')
 
 dp = Dispatcher()
