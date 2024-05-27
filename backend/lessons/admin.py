@@ -42,17 +42,17 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ['name', 'questions_qty', 'topic', 'language']
-    list_display_links = ['name']
+    list_display = ['title', 'questions_qty', 'topic', 'language']
+    list_display_links = ['title']
     list_filter = ['topic', 'topic__language']
-    search_fields = ['name']
+    search_fields = ['title']
     list_per_page = 20
 
     @admin.display(description='Язык')
     def language(self, obj):
         return obj.topic.language
 
-    @admin.display(description='Количество вопросов')
+    @admin.display(description='Вопросы')
     def questions_qty(self, obj):
         qty = Question.objects.filter(lesson=obj).count()
         return get_link(obj, qty, 'lesson', 'question')
@@ -60,13 +60,13 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ['name', 'lessons_qty', 'language']
-    list_display_links = ['name']
+    list_display = ['title', 'lessons_qty', 'language']
+    list_display_links = ['title']
     list_filter = ['language']
-    search_fields = ['name']
+    search_fields = ['title']
     list_per_page = 20
 
-    @admin.display(description='Количество уроков')
+    @admin.display(description='Уроки')
     def lessons_qty(self, obj):
         qty = Lesson.objects.filter(topic=obj).count()
         return get_link(obj, qty, 'topic', 'lesson')
@@ -74,10 +74,11 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description', 'topics_qty']
-    list_display_links = ['name']
+    list_display = ['title', 'description', 'topics_qty']
+    list_display_links = ['title']
+    prepopulated_fields = {'slug': ('title', )}
 
-    @admin.display(description='Количество тем')
+    @admin.display(description='Темы')
     def topics_qty(self, obj):
         qty = Topic.objects.filter(language=obj).count()
         return get_link(obj, qty, 'language', 'topic')
