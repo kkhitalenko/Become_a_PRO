@@ -1,14 +1,9 @@
-from aiogram import types
+from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 languages_builder = InlineKeyboardBuilder()
-languages_builder.row(types.InlineKeyboardButton(
-    text='Python', url='http://127.0.0.1:8000/api/v1/topics/'
-))
-languages_builder.row(types.InlineKeyboardButton(
-    text='Go', url='http://127.0.0.1:8000/api/v1/topics/'
-))
-languages_builder.row(types.InlineKeyboardButton(
-    text='Rust', url='http://127.0.0.1:8000/api/v1/topics/'
-))
+languages_builder.add(InlineKeyboardButton(text='Python',
+                                           callback_data='Python'))
+languages_builder.add(InlineKeyboardButton(text='Go', callback_data='Go'))
+languages_builder.add(InlineKeyboardButton(text='Rust', callback_data='Rust'))
