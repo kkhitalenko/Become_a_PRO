@@ -14,7 +14,7 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     await message.answer(messages.START_MESSAGE,
-                         reply_markup=keyboards.languages.as_markup())
+                         reply_markup=keyboards.get_langeages_kb())
 
 
 @router.callback_query(F.data.in_({'Python', 'Go', 'Rust'}))
@@ -28,7 +28,7 @@ async def get_info_from_user(callback: CallbackQuery, state: FSMContext):
     await callback.answer(text=description, show_alert=True)
 
     await callback.message.answer(f'Ты изучал ранее {language}?',
-                                  reply_markup=keyboards.yes_no.as_markup())
+                                  reply_markup=keyboards.get_yes_no_kb())
 
 
 @router.callback_query(BotStates.starting)
