@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
 
-from lessons.models import Answer, Language, Lesson, Question, Topic
+from lessons.models import Answer, Language, Lesson, Progress, Question, Topic
 
 
 def get_link(obj, qty: int, category: str, subcategory: str):
@@ -82,3 +82,8 @@ class LanguageAdmin(admin.ModelAdmin):
     def topics_qty(self, obj):
         qty = Topic.objects.filter(language=obj).count()
         return get_link(obj, qty, 'language', 'topic')
+
+
+@admin.register(Progress)
+class ProgressAdmin(admin.ModelAdmin):
+    list_display = ['tg_user', 'language', 'last_completed_lesson']
