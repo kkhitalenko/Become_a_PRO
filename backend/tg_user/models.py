@@ -7,5 +7,8 @@ class TelegramUser(models.Model):
                                 null=True)
 
     class Meta:
-        verbose_name = 'Пользователь бота'
-        verbose_name_plural = 'Пользователи бота'
+        verbose_name = 'пользователь бота'
+        verbose_name_plural = 'пользователи бота'
+
+    def __str__(self):
+        return f'{self.tg_user_id}'
