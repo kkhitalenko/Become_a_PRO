@@ -3,9 +3,13 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
 
 from core.commands import set_commands
 from core.handlers import router
+
+
+load_dotenv()
 
 
 TOKEN = os.getenv('TOKEN')
