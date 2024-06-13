@@ -1,8 +1,17 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.generics import RetrieveAPIView
 
+from api.serializers import LanguageSerializer
+from lessons.models import Language
 from tg_user.models import TelegramUser
+
+
+class LanguageDetail(RetrieveAPIView):
+    queryset = Language.objects.all()
+    serializer_class = LanguageSerializer
+    lookup_field = 'slug'
 
 
 @api_view(['POST'])

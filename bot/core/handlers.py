@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from core import keyboards, messages
-from core.data_fetcher import get_description, create_user
+from core.data_fetcher import create_user, get_description
 from core.states import BotStates
 
 
