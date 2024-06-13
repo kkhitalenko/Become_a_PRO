@@ -1,28 +1,12 @@
 from rest_framework import serializers
 
-from lessons.models import Language, Lesson, Question, Topic
+from lessons.models import Language, Question
 
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = ['name', 'description']
-
-
-class TopicSerializer(serializers.ModelSerializer):
-    language = serializers.CharField()
-
-    class Meta:
-        model = Topic
-        fields = ['language', 'name']
-
-
-class LessonSerializer(serializers.ModelSerializer):
-    topic = serializers.CharField()
-
-    class Meta:
-        model = Lesson
-        fields = ['topic', 'name', 'theory']
+        fields = ['description']
 
 
 class QuestionSerializer(serializers.ModelSerializer):

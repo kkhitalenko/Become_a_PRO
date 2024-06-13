@@ -1,25 +1,15 @@
-from rest_framework import viewsets
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-from api.serializers import (LanguageSerializer, LessonSerializer,
-                             QuestionSerializer, TopicSerializer)
-from lessons.models import Language, Lesson, Question, Topic
-
-
-class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Language.objects.all()
-    serializer_class = LanguageSerializer
+from tg_user.models import TelegramUser
 
 
-class TopicViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
-
-
-class LessonViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
-
-
-class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
+@api_view(['POST'])
+def create_user(request):
+    user_id = request.data.get('user_id')
+    username = request.data.get('username')
+    if not TelegramUser.objects.filter(tg_user_id=user_id).exists():
+        TelegramUser.objects.create(tg_user_id=user_id, username=username)
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_200_OK)

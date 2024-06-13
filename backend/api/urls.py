@@ -1,19 +1,24 @@
-from django.urls import include, path
+from django.urls import path
 
-from rest_framework import routers
+from rest_framework.generics import RetrieveAPIView
 
-from . import views
+from api import views
+from api.serializers import LanguageSerializer
+from lessons.models import Language
 
 
 app_name = 'api'
 
-router = routers.DefaultRouter()
-router.register(r'languages', views.LanguageViewSet)
-router.register(r'topics', views.TopicViewSet)
-router.register(r'lessons', views.LessonViewSet)
-router.register(r'questions', views.QuestionViewSet)
-
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path(
+        'languages/<slug:slug>/',
+        RetrieveAPIView.as_view(
+            queryset=Language.objects.all(),
+            serializer_class=LanguageSerializer,
+            lookup_field='slug'
+        ),
+        name='language description'
+    ),
+    path('create_user/', views.create_user),
 ]
