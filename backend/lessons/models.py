@@ -1,7 +1,5 @@
 from django.db import models
 
-from tg_user.models import TelegramUser
-
 
 class Answer(models.Model):
     text = models.CharField('Ответ', max_length=255, unique=True)
@@ -107,9 +105,7 @@ class Language(models.Model):
 
 
 class Progress(models.Model):
-    tg_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE,
-                                verbose_name='пользователь бота',
-                                related_name='progress')
+    tg_user = models.PositiveBigIntegerField('id пользователя бота')
     language = models.ForeignKey(Language, on_delete=models.CASCADE,
                                  verbose_name='язык')
     last_completed_lesson = models.ForeignKey(Lesson, on_delete=models.PROTECT,

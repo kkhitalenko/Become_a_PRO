@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tg_user', '0001_initial'),
         ('lessons', '0004_rename_name_language_title_rename_name_lesson_title_and_more'),
     ]
 
@@ -63,7 +62,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('language', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lessons.language', verbose_name='язык')),
                 ('last_completed_lesson', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='lessons.lesson', verbose_name='пройденный урок')),
-                ('tg_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='progress', to='tg_user.telegramuser', verbose_name='пользователь бота')),
+                ('tg_user', models.PositiveBigIntegerField(verbose_name='id пользователя бота')),
                 ('wrong_answers', models.ManyToManyField(blank=True, to='lessons.question', verbose_name='неверные ответы')),
             ],
             options={
