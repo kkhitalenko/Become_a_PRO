@@ -123,5 +123,12 @@ class Progress(models.Model):
         verbose_name = 'прогресс пользователя'
         verbose_name_plural = 'прогрессы пользователей'
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['tg_user', 'language'],
+                name='unique_language_user'
+            ),
+        ]
+
     def __str__(self):
         return f'Прогресс пользователя {self.tg_user} в {self.language}'
