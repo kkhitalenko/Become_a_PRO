@@ -86,4 +86,4 @@ class LanguageAdmin(admin.ModelAdmin):
 
 @admin.register(Progress)
 class ProgressAdmin(admin.ModelAdmin):
-    list_display = ['tg_user', 'language', 'last_completed_lesson']
+    list_display = ['language', 'last_completed_lesson']
