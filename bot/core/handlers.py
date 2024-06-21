@@ -1,5 +1,6 @@
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.enums import ParseMode
+from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
@@ -15,6 +16,13 @@ router = Router()
 async def cmd_start(message: Message):
     await message.answer(messages.START_MESSAGE,
                          reply_markup=keyboards.get_langeages_kb())
+
+
+@router.message(Command('help'))
+async def cmd_help(message: Message):
+    await message.answer(messages.HELP_MESSAGE,
+                         reply_markup=keyboards.get_commands_kb(),
+                         parse_mode=ParseMode.HTML)
 
 
 @router.callback_query(F.data.in_({'Python', 'Go', 'Rust'}))
