@@ -104,6 +104,7 @@ class Language(models.Model):
 
 
 class Progress(models.Model):
+    tg_user_id = models.PositiveBigIntegerField('id пользователя')
     language = models.ForeignKey(Language, on_delete=models.CASCADE,
                                  verbose_name='язык')
     last_completed_lesson = models.ForeignKey(Lesson, on_delete=models.PROTECT,
@@ -116,6 +117,12 @@ class Progress(models.Model):
     class Meta:
         verbose_name = 'прогресс пользователя'
         verbose_name_plural = 'прогрессы пользователей'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['language', 'tg_user_id'],
+                name='unique_language_tguser'
+            ),
+        ]
 
     def __str__(self):
         return f'Последний пройденный урок в {self.language} - \
