@@ -22,7 +22,7 @@ build-backend = "poetry.core.masonry.api"
 fix = true
 line-length = 79
 show-fixes = true
-src = ["bot"]
+src = ["bot", "main", "core"]
 target-version = "py311"
 
 [tool.ruff.format]
@@ -39,6 +39,8 @@ extend-select = [
     "PTH", # flake8-use-pathlib 
     "RUF", # ruff checks
 ]
+ignore = ["RUF001", "N806"]
+
 
 [tool.ruff.lint.isort]
 lines-between-types = 1
