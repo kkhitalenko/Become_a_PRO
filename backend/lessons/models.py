@@ -1,31 +1,21 @@
 from django.db import models
 
 
-class Answer(models.Model):
-    text = models.CharField('Ответ', max_length=255, unique=True)
-
-    class Meta:
-        verbose_name = 'ответ'
-        verbose_name_plural = 'ответы'
-
-    def __str__(self):
-        return self.text
-
-
 class Question(models.Model):
     lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE,
                                verbose_name='урок',
                                related_name='questions_of_lesson')
     text = models.TextField('Вопрос')
-    options = models.ManyToManyField(Answer, verbose_name='варианты ответа')
-    correct_option = models.ForeignKey(Answer, on_delete=models.PROTECT,
-                                       verbose_name='верный ответ',
-                                       related_name='questions_correct_option')
+    answer1 = models.CharField('Вариант 1', max_length=255)
+    answer2 = models.CharField('Вариант 2', max_length=255)
+    answer3 = models.CharField('Вариант 3', max_length=255)
+    correct_answer = models.CharField('Верный ответ', max_length=255)
     serial_number = models.PositiveIntegerField('Номер вопроса в уроке')
 
     class Meta:
         verbose_name = 'вопрос'
         verbose_name_plural = 'вопросы'
+        order_with_respect_to = 'lesson'
         constraints = [
             models.UniqueConstraint(
                 fields=['lesson', 'text'],
@@ -42,47 +32,24 @@ class Question(models.Model):
 
 
 class Lesson(models.Model):
-    topic = models.ForeignKey('Topic', on_delete=models.CASCADE,
-                              verbose_name='тема', related_name='lessons')
+    language = models.ForeignKey('Language', on_delete=models.CASCADE,
+                                 verbose_name='язык', related_name='lessons')
     title = models.CharField('Урок', max_length=50)
     theory = models.TextField('Теория')
-    serial_number = models.PositiveIntegerField('Номер урока в теме')
+    serial_number = models.PositiveIntegerField('Номер урока в языке')
 
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['topic', 'title'],
-                name='unique_topic_lesson'
-            ),
-            models.UniqueConstraint(
-                fields=['topic', 'serial_number'],
-                name='unique_topic_lessonsnumber'
-            )
-        ]
-
-    def __str__(self):
-        return self.title
-
-
-class Topic(models.Model):
-    language = models.ForeignKey('Language', on_delete=models.CASCADE,
-                                 verbose_name='язык', related_name='topics')
-    title = models.CharField('Тема', max_length=50)
-    serial_number = models.PositiveIntegerField('Номер темы в языке')
-
-    class Meta:
-        verbose_name = 'тема'
-        verbose_name_plural = 'темы'
+        order_with_respect_to = 'language'
         constraints = [
             models.UniqueConstraint(
                 fields=['language', 'title'],
-                name='unique_language_topic'
+                name='unique_language_lesson'
             ),
             models.UniqueConstraint(
                 fields=['language', 'serial_number'],
-                name='unique_language_topicsnumber'
+                name='unique_language_lessonsnumber'
             )
         ]
 
@@ -117,6 +84,7 @@ class Progress(models.Model):
     class Meta:
         verbose_name = 'прогресс пользователя'
         verbose_name_plural = 'прогрессы пользователей'
+        indexes = [models.Index(fields=['language', 'tg_user_id'])]
         constraints = [
             models.UniqueConstraint(
                 fields=['language', 'tg_user_id'],
