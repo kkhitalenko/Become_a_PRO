@@ -55,7 +55,7 @@ async def send_feedback_to_admin(message: Message, state: FSMContext):
     await message.answer('Спасибо за фидбэк, мы передали его автору')
 
 
-@router.callback_query(F.data.in_({'Python', 'Go', 'Rust'}))
+@router.callback_query(F.data.in_({'python', 'go', 'rust'}))
 async def get_info_from_user(callback: CallbackQuery, state: FSMContext):
 
     language = callback.data
@@ -63,24 +63,25 @@ async def get_info_from_user(callback: CallbackQuery, state: FSMContext):
     await state.set_state(BotStates.starting)
     await state.update_data(language=language)
 
-    description = await get_description(language.lower())
+    description = await get_description(language)
     await callback.answer(text=description, show_alert=True)
 
     tg_user_id = callback.from_user.id
     await state.update_data(tg_user_id=tg_user_id)
-    await callback.message.answer(f'Ты изучал ранее {language}?',
+    await callback.message.answer(f'Ты изучал ранее {language.title()}?',
                                   reply_markup=keyboards.get_yes_no_kb())
+    # await callback.answer()
 
 
 @router.callback_query(BotStates.starting)
 async def get_progress(callback: CallbackQuery, state: FSMContext):
-    # пока так
-    ZERO_LESSON_ID = {'Python': 2, 'Go': 2, 'Rust': 1}
     state_data = await state.get_data()
     tg_user_id = state_data['tg_user_id']
     language = state_data['language']
-    last_completed_lesson = ZERO_LESSON_ID.get(language)
+    last_completed_lesson = 0
+
     if callback.data == 'да':
         pass
         # await test_the_user()
-    await create_progress(tg_user_id, language.lower(), last_completed_lesson)
+
+    await create_progress(tg_user_id, language, last_completed_lesson)

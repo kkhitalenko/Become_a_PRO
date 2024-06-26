@@ -9,7 +9,8 @@ def get_commands_kb():
                     'switch_language', 'feedback']
     for command in BOT_COMMANDS:
         commands.button(text=command, callback_data=command)
-    commands.button(text='github', url='https://github.com/kkhitalenko/Become_a_PRO')
+    commands.button(text='github',
+                    url='https://github.com/kkhitalenko/Become_a_PRO')
     commands.adjust(3, 2, 2)
     return commands.as_markup()
 
@@ -18,9 +19,9 @@ def get_langeages_kb():
     """Returns the keyboard with 'Python', 'Go' and 'Rust' buttons."""
 
     languages = InlineKeyboardBuilder()
-    languages.button(text='Python', callback_data='Python')
-    languages.button(text='Go', callback_data='Go')
-    languages.button(text='Rust', callback_data='Rust')
+    languages.button(text='Python', callback_data='python')
+    languages.button(text='Go', callback_data='go')
+    languages.button(text='Rust', callback_data='rust')
     return languages.as_markup()
 
 
