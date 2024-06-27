@@ -15,7 +15,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = 'вопрос'
         verbose_name_plural = 'вопросы'
-        order_with_respect_to = 'lesson'
+        ordering = ['serial_number']
         constraints = [
             models.UniqueConstraint(
                 fields=['lesson', 'text'],
@@ -41,7 +41,7 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
-        order_with_respect_to = 'language'
+        ordering = ['language', 'serial_number']
         constraints = [
             models.UniqueConstraint(
                 fields=['language', 'title'],
