@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from lessons.models import Language, Progress, Question
+from lessons.models import Language, Lesson, Progress, Question
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -10,18 +10,23 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    lesson = serializers.CharField()
-    options = serializers.StringRelatedField(many=True)
-    correct_option = serializers.CharField()
-
     class Meta:
         model = Question
-        fields = ['lesson', 'text', 'options', 'correct_option']
+        fields = ['text', 'answer1', 'answer2', 'answer3', 'correct_answer']
+
+
+class LessonSerializer(serializers.Serializer):
+    title = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all())
+    questions_of_lesson = QuestionSerializer(many=True)
 
 
 class ProgressSerializer(serializers.ModelSerializer):
     language = serializers.SlugRelatedField(queryset=Language.objects.all(),
                                             slug_field='title')
+    last_completed_lesson = serializers.SlugRelatedField(
+        queryset=Lesson.objects.all(),
+        slug_field='serial_number'
+    )
 
     class Meta:
         model = Progress

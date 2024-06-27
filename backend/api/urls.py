@@ -14,5 +14,6 @@ v1_router.register(r'progress', views.ProgressViewSet, basename='progress')
 
 urlpatterns = [
     path('languages/<slug:slug>/', views.LanguageDetail.as_view()),
+    path('lessons/<slug:language>/<int:serial_number>/', views.lesson_detail),
     path('', include(v1_router.urls)),
 ]
