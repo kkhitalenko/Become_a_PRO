@@ -1,12 +1,10 @@
 import os
 
 from aiogram import F, Router
-from aiogram.enums import ParseMode
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from dotenv import load_dotenv
-from main import bot
 
 from core import keyboards, messages
 from core.data_fetcher import create_progress, get_description
@@ -27,32 +25,28 @@ async def cmd_start(message: Message):
 
 @router.message(Command('help'))
 async def cmd_help(message: Message):
-    await message.answer(messages.HELP_MESSAGE,
-                         reply_markup=keyboards.get_commands_kb(),
-                         parse_mode=ParseMode.HTML)
+    await message.answer(messages.HELP_MESSAGE)
 
 
-@router.callback_query(F.data == 'start')
-async def cmd_start_callback(callback: CallbackQuery):
-    await callback.message.answer(messages.START_MESSAGE,
-                                  reply_markup=keyboards.get_langeages_kb())
-    await callback.answer()
+@router.message(Command('github'))
+async def cmd_github(message: Message):
+    await message.answer(messages.GITHUB_URL_MESSAGE)
 
 
-@router.callback_query(F.data == 'feedback')
-async def get_feedback(callback: CallbackQuery, state: FSMContext):
+@router.message(Command('feedback'))
+async def get_feedback(message: Message, state: FSMContext):
     await state.set_state(BotStates.feedback)
-    await callback.message.answer('Напиши мне, что думаешь')
-    await callback.answer()
+    await message.answer(messages.FEEDBACK_MESSAGE)
 
 
 @router.message(BotStates.feedback)
 async def send_feedback_to_admin(message: Message, state: FSMContext):
-    await bot.send_message(chat_id=ADMIN_TG_ID,
-                           text=f'пользователь с id={message.from_user.id}'
-                                f' написал "{message.text}"')
+    await message.bot.send_message(
+        chat_id=ADMIN_TG_ID,
+        text=f'пользователь id={message.from_user.id} написал "{message.text}"'
+    )
     await state.clear()
-    await message.answer('Спасибо за фидбэк, мы передали его автору')
+    await message.answer(messages.THANKS_FOR_FEEDBACK_MESSAGE)
 
 
 @router.callback_query(F.data.in_({'python', 'go', 'rust'}))
