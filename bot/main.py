@@ -6,19 +6,18 @@ from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 
 from core.commands import set_commands
+from core.handlers import router
 
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
 dp = Dispatcher()
-bot = Bot(token=TOKEN)
+dp.include_router(router)
 
 
 async def main():
-    from core.handlers import router
-    dp.include_router(router)
-
+    bot = Bot(token=TOKEN)
     await set_commands(bot)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
