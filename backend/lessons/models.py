@@ -80,6 +80,7 @@ class Progress(models.Model):
     wrong_answers = models.ManyToManyField(Question, blank=True,
                                            verbose_name='вопросы, на которые \
                                             пользователь ответил неверно')
+    slug = models.SlugField(unique=True)
 
     class Meta:
         verbose_name = 'прогресс пользователя'
