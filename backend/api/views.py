@@ -5,7 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.serializers import (LanguageSerializer, LessonSerializer,
-                             ProgressSerializer)
+                             ProgressCreateSerializer,
+                             ProgressGetUpdateDeleteSerializer)
 from lessons.models import Language, Lesson, Progress
 
 
@@ -21,23 +22,12 @@ class ProgressViewSet(viewsets.ModelViewSet):
     """ViewSet for user progress CRUD operations."""
 
     queryset = Progress.objects.all()
-    serializer_class = ProgressSerializer
+    lookup_field = 'slug'
 
-    def create(self, request):
-
-        tg_user_id = request.data.get('tg_user_id')
-        language = request.data.get('language')
-        last_completed_lesson = request.data.get('last_completed_lesson')
-
-        language = Language.objects.get(slug=language)
-        lesson = Lesson.objects.get(language=language,
-                                    serial_number=last_completed_lesson)
-
-        progress = Progress.objects.create(tg_user_id=tg_user_id,
-                                           language=language,
-                                           last_completed_lesson=lesson)
-        serializer = ProgressSerializer(progress)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ProgressCreateSerializer
+        return ProgressGetUpdateDeleteSerializer
 
 
 @api_view()

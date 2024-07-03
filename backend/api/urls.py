@@ -1,19 +1,17 @@
-from django.urls import include, path
+from django.urls import path
 
-from rest_framework.routers import DefaultRouter
-
-from api import views
+from api.views import LanguageDetail, ProgressViewSet, lesson_detail
 
 
 app_name = 'api'
 
-v1_router = DefaultRouter()
-
-v1_router.register(r'progress', views.ProgressViewSet, basename='progress')
-
 
 urlpatterns = [
-    path('languages/<slug:slug>/', views.LanguageDetail.as_view()),
-    path('lessons/<slug:language>/<int:serial_number>/', views.lesson_detail),
-    path('', include(v1_router.urls)),
+    path('languages/<slug:slug>/', LanguageDetail.as_view()),
+    path('lessons/<slug:language>/<int:serial_number>/', lesson_detail),
+    path('progress/<slug:slug>/',
+         ProgressViewSet.as_view({'get': 'retrieve',
+                                  'patch': 'partial_update',
+                                  'delete': 'destroy'})),
+    path('progress/', ProgressViewSet.as_view({'post': 'create'})),
 ]
