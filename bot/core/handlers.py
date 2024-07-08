@@ -7,7 +7,8 @@ from aiogram.types import CallbackQuery, Message
 from dotenv import load_dotenv
 
 from core import keyboards, messages
-from core.data_fetcher import create_progress, get_description
+from core.data_fetcher import (check_progress, create_progress,
+                               get_description, update_progress)
 from core.states import BotStates
 
 
@@ -50,32 +51,64 @@ async def send_feedback_to_admin(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.in_({'python', 'go', 'rust'}))
-async def get_info_from_user(callback: CallbackQuery, state: FSMContext):
+async def start_studying(callback: CallbackQuery, state: FSMContext):
 
     language = callback.data
+    tg_user_id = callback.from_user.id
 
     await state.set_state(BotStates.starting)
     await state.update_data(language=language)
-
-    description = await get_description(language)
-    await callback.answer(text=description, show_alert=True)
-
-    tg_user_id = callback.from_user.id
     await state.update_data(tg_user_id=tg_user_id)
-    await callback.message.answer(f'Ты изучал ранее {language.title()}?',
-                                  reply_markup=keyboards.get_yes_no_kb())
-    # await callback.answer()
+
+    progress = await check_progress(tg_user_id, language)
+    if progress:
+        await callback.message.answer(
+            f'Ты уже начал учить {language.title()}, что ты хочешь?',
+            reply_markup=keyboards.get_continue_or_reset_kb()
+        )
+    else:
+        await callback.message.answer(
+            f'Ты изучал ранее {language.title()}?',
+            reply_markup=keyboards.get_yes_no_kb()
+        )
+    await callback.answer()
 
 
-@router.callback_query(BotStates.starting)
-async def get_progress(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(F.data.in_({'да', 'нет'}), BotStates.starting)
+async def set_progress(callback: CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    tg_user_id = state_data['tg_user_id']
+    language = state_data['language']
+
+    if callback.data == 'да':
+        last_completed_lesson = await test_the_user(tg_user_id, language)
+    elif callback.data == 'нет':
+        last_completed_lesson = 0
+        description = await get_description(language)
+        await callback.answer(text=description, show_alert=True)
+
+    await create_progress(tg_user_id, language, last_completed_lesson)
+    await continue_studying(tg_user_id, language, last_completed_lesson,
+                            callback)
+
+
+@router.callback_query(F.data == 'reset', BotStates.starting)
+async def reset(callback: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     tg_user_id = state_data['tg_user_id']
     language = state_data['language']
     last_completed_lesson = 0
+    await update_progress(tg_user_id, language, last_completed_lesson)
+    await continue_studying(tg_user_id, language, last_completed_lesson,
+                            callback)
+    await callback.answer()
 
-    if callback.data == 'да':
-        pass
-        # await test_the_user()
 
-    await create_progress(tg_user_id, language, last_completed_lesson)
+async def test_the_user(tg_user_id: int, language: str):
+    pass
+
+
+async def continue_studying(tg_user_id: int, language: str,
+                            last_completed_lesson: int,
+                            callback: CallbackQuery):
+    pass
