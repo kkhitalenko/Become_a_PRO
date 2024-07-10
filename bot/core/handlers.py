@@ -1,23 +1,17 @@
-import os
-
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from dotenv import load_dotenv
 
-
+from config import ADMIN_TG_ID
 from core import keyboards, messages
-from core.data_fetcher import (create_progress, get_description, get_lesson,
-                               get_progress, update_progress)
+from core.services import (create_progress, get_description, get_lesson,
+                           get_progress, update_progress)
 from core.states import BotStates
 from main import bot
 
 
 router = Router()
-
-load_dotenv()
-ADMIN_TG_ID = os.getenv('ADMIN_TG_ID')
 
 
 @router.message(CommandStart())
