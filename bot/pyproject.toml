@@ -45,5 +45,5 @@ ignore = ["RUF001", "N806"]
 [tool.ruff.lint.isort]
 lines-between-types = 1
 lines-after-imports = 2
-known-first-party = ["poetry"]
+known-first-party = ["core", "main", "config"]
 known-third-party = ["poetry.core"]

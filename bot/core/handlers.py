@@ -3,7 +3,7 @@ from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from config import ADMIN_TG_ID
+from config import ADMIN_TG_ID, LANGUAGE_LIST
 from core import keyboards, messages
 from core.services import (create_progress, get_description, get_lesson,
                            get_progress, update_progress)
@@ -40,13 +40,14 @@ async def get_feedback(message: Message, state: FSMContext):
 async def send_feedback_to_admin(message: Message, state: FSMContext):
     await message.bot.send_message(
         chat_id=ADMIN_TG_ID,
-        text=messages.get_message_to_admin(message.from_user.id, message.text)
+        text=messages.MESSAGE_TO_ADMIN.format(message.from_user.id,
+                                              message.text)
     )
     await state.clear()
     await message.answer(messages.THANKS_FOR_FEEDBACK)
 
 
-@router.callback_query(F.data.in_({'python', 'go', 'rust'}))
+@router.callback_query(F.data.in_(LANGUAGE_LIST))
 async def start_studying(callback: CallbackQuery, state: FSMContext):
     language = callback.data
     tg_user_id = callback.from_user.id
@@ -58,12 +59,12 @@ async def start_studying(callback: CallbackQuery, state: FSMContext):
     progress = await get_progress(tg_user_id, language)
     if progress:
         await callback.message.answer(
-            messages.already_learned_the_language(language),
+            messages.ALREADY_LEARNED.format(language.title()),
             reply_markup=keyboards.get_continue_or_reset_kb()
         )
     else:
         await callback.message.answer(
-            messages.have_you_already_learned(language),
+            messages.HAVE_YOU_ALREADY_LEARNED.format(language.title()),
             reply_markup=keyboards.get_yes_no_kb()
         )
     await callback.answer()
@@ -114,7 +115,7 @@ async def cmd_continue(message: Message, state: FSMContext):
     tg_user_id = message.from_user.id
 
     progresses = []
-    for language in ['python', 'go', 'rust']:
+    for language in LANGUAGE_LIST:
         progress = await get_progress(tg_user_id, language)
         if progress is not None:
             progresses.append(language)
@@ -124,7 +125,7 @@ async def cmd_continue(message: Message, state: FSMContext):
                              reply_markup=keyboards.get_langeages_kb())
     elif len(progresses) == 1:
         language = progresses[0]
-        await state.set_state(BotStates.learning)
+        await state.set_state(BotStates.studying)
         await _continue_studying(tg_user_id, language, state)
     else:
         await message.answer(messages.WHICH_LANGUAGE,
@@ -146,7 +147,7 @@ async def _continue_studying(tg_user_id: int, language: str,
                              state: FSMContext):
     """
     Takes an user id and a language as inputs.
-    Defines last lesson learned for this user in this language.
+    Defines last completed lesson for this user in this language.
     Sends next lesson information, first question and provides with multiple
     options choice keyboard.
     """
@@ -172,7 +173,7 @@ async def _continue_studying(tg_user_id: int, language: str,
         ]
         correct_option = first_question.get('correct_answer')
 
-        await state.set_state(BotStates.learning)
+        await state.set_state(BotStates.studying)
         await state.update_data(tg_user_id=tg_user_id)
         await state.update_data(language=language)
         await state.update_data(last_completed_lesson=last_completed_lesson)
@@ -184,7 +185,7 @@ async def _continue_studying(tg_user_id: int, language: str,
                                reply_markup=keyboards.create_kb(options))
 
 
-@router.callback_query(BotStates.learning)
+@router.callback_query(BotStates.studying)
 async def continue_studying_callback(callback: CallbackQuery,
                                      state: FSMContext):
     """

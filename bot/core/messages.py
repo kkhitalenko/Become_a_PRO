@@ -27,14 +27,8 @@ LETS_START = 'Кажется, продолжать нечего. Может на
 
 WHICH_LANGUAGE = 'Какой язык ты хочешь продолжить изучать?'
 
+MESSAGE_TO_ADMIN = 'Пользователь с id={} написал "{}"'
 
-def get_message_to_admin(user_id: int, text: str) -> str:
-    return f'Пользователь с id={user_id} написал "{text}"'
+ALREADY_LEARNED = 'Ты уже начал учить {}, что ты хочешь?'
 
-
-def already_learned_the_language(language: str) -> str:
-    return f'Ты уже начал учить {language.title()}, что ты хочешь?'
-
-
-def have_you_already_learned(language: str) -> str:
-    return f'Ты изучал ранее {language.title()}?'
+HAVE_YOU_ALREADY_LEARNED = 'Ты изучал ранее {}?'
