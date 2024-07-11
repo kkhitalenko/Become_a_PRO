@@ -2,6 +2,7 @@ from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
+from aiogram.enums.parse_mode import ParseMode
 
 from config import ADMIN_TG_ID, LANGUAGE_LIST
 from core import keyboards, messages
@@ -81,10 +82,11 @@ async def set_progress(callback: CallbackQuery, state: FSMContext):
     elif callback.data == 'no':
         last_completed_lesson = 0
         description = await get_description(language)
-        await callback.answer(text=description, show_alert=True)
+        await callback.message.answer(description)
 
     await create_progress(tg_user_id, language, last_completed_lesson)
     await _continue_studying(tg_user_id, language, state)
+    await callback.answer()
 
 
 @router.callback_query(F.data == 'reset', BotStates.starting)
@@ -160,8 +162,12 @@ async def _continue_studying(tg_user_id: int, language: str,
         await state.clear()
 
     else:
+        lesson_title = lesson.get('title')
         await bot.send_message(chat_id=tg_user_id,
-                               text=str(lesson.get('title')))
+                               text=messages.LESSON.format(lesson_title),
+                               parse_mode=ParseMode.HTML)
+        await bot.send_message(chat_id=tg_user_id,
+                               text=str(lesson.get('theory')))
 
         questions = lesson.get('questions_of_lesson')
         first_question = questions[0]

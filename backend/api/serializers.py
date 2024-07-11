@@ -15,9 +15,12 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ['text', 'answer1', 'answer2', 'answer3', 'correct_answer']
 
 
-class LessonSerializer(serializers.Serializer):
-    title = serializers.PrimaryKeyRelatedField(queryset=Lesson.objects.all())
+class LessonSerializer(serializers.ModelSerializer):
     questions_of_lesson = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Lesson
+        fields = ['title', 'theory', 'questions_of_lesson']
 
 
 class ProgressSerializer(serializers.ModelSerializer):
