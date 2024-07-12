@@ -35,5 +35,5 @@ def create_kb(buttons: List[str]):
 
     kb = InlineKeyboardBuilder()
     for btn in buttons:
-        kb.button(text=btn.title(), callback_data=btn)
+        kb.button(text=btn, callback_data=btn)
     return kb.as_markup()
