@@ -4,7 +4,7 @@ from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from config import ADMIN_TG_ID, LANGUAGE_LIST
+from config import LANGUAGE_LIST
 from core import keyboards, messages
 from core.services import (create_progress, get_description, get_lesson,
                            get_progress, update_progress)
@@ -21,35 +21,8 @@ async def cmd_start(message: Message):
                          reply_markup=keyboards.get_langeages_kb())
 
 
-@router.message(Command('help'))
-async def cmd_help(message: Message):
-    await message.answer(messages.HELP)
-
-
-@router.message(Command('github'))
-async def cmd_github(message: Message):
-    await message.answer(messages.GITHUB_URL)
-
-
-@router.message(Command('feedback'))
-async def get_feedback(message: Message, state: FSMContext):
-    await state.set_state(BotStates.feedback)
-    await message.answer(messages.FEEDBACK)
-
-
-@router.message(BotStates.feedback)
-async def send_feedback_to_admin(message: Message, state: FSMContext):
-    await message.bot.send_message(
-        chat_id=ADMIN_TG_ID,
-        text=messages.MESSAGE_TO_ADMIN.format(message.from_user.id,
-                                              message.text)
-    )
-    await state.clear()
-    await message.answer(messages.THANKS_FOR_FEEDBACK)
-
-
 @router.callback_query(F.data.in_(LANGUAGE_LIST))
-async def start_studying(callback: CallbackQuery, state: FSMContext):
+async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
     tg_user_id = callback.from_user.id
     language = callback.data
 
@@ -95,7 +68,7 @@ async def set_progress(callback: CallbackQuery, state: FSMContext):
         last_completed_lesson = 0
         await update_progress(tg_user_id, language, last_completed_lesson)
 
-    await _continue_studying(tg_user_id, language, state)
+    await _study(state)
     await callback.answer()
 
 
@@ -109,7 +82,7 @@ async def cmd_continue(message: Message, state: FSMContext):
     Check if progress exists in several languages
 
      - Notify user if progress not found
-     - Form data and call _continue_studying if progress is only one
+     - Form data and call _study if progress is only one
      - Send keyboard to user for language choice if progress is more than one.
     """
 
@@ -128,7 +101,7 @@ async def cmd_continue(message: Message, state: FSMContext):
         language = progresses[0]
         await state.set_state(BotStates.studying)
         await state.update_data(tg_user_id=tg_user_id, language=language)
-        await _continue_studying(tg_user_id, language, state)
+        await _study(state)
     else:
         await message.answer(messages.WHICH_LANGUAGE,
                              reply_markup=keyboards.create_kb(progresses))
@@ -136,23 +109,20 @@ async def cmd_continue(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == 'continue')
 async def callback_continue(callback: CallbackQuery, state: FSMContext):
-    """Form data and call _continue_studying."""
-
-    state_data = await state.get_data()
-    tg_user_id = state_data['tg_user_id']
-    language = state_data['language']
-    await _continue_studying(tg_user_id, language, state)
+    await _study(state)
     await callback.answer()
 
 
-async def _continue_studying(tg_user_id: int, language: str,
-                             state: FSMContext):
+async def _study(state: FSMContext):
     """
-    Takes an user id and a language as inputs.
     Defines last completed lesson for this user in this language.
     Sends next lesson information, first question and provides with multiple
     options choice keyboard.
     """
+
+    state_data = await state.get_data()
+    tg_user_id = state_data['tg_user_id']
+    language = state_data['language']
 
     last_completed_lesson = await get_progress(tg_user_id, language)
     lesson = await get_lesson(language, last_completed_lesson)
@@ -189,11 +159,11 @@ async def _continue_studying(tg_user_id: int, language: str,
 
 
 @router.callback_query(BotStates.studying)
-async def continue_studying_callback(callback: CallbackQuery,
-                                     state: FSMContext):
+async def study_callback(callback: CallbackQuery,
+                         state: FSMContext):
     """
     Send questions to user.
-    After last question calls _continue_studying for the next lesson.
+    After last question calls _study for the next lesson.
     """
 
     state_data = await state.get_data()
@@ -230,6 +200,6 @@ async def continue_studying_callback(callback: CallbackQuery,
             last_completed_lesson = state_data['last_completed_lesson'] + 1
 
             await update_progress(tg_user_id, language, last_completed_lesson)
-            await _continue_studying(tg_user_id, language, state)
+            await _study(state)
 
     await callback.answer()
