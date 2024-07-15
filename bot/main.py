@@ -13,8 +13,8 @@ bot = Bot(token=TOKEN)
 
 
 async def main():
-    from core.handlers.studying_handlers import router as studying_router
     from core.handlers.common_handlers import router as common_router
+    from core.handlers.studying_handlers import router as studying_router
 
     dp.include_routers(common_router, studying_router)
     await set_commands(bot)

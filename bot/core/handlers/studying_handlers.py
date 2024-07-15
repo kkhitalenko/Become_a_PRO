@@ -68,7 +68,7 @@ async def set_progress(callback: CallbackQuery, state: FSMContext):
         last_completed_lesson = 0
         await update_progress(tg_user_id, language, last_completed_lesson)
 
-    await _study(state)
+    await study(state)
     await callback.answer()
 
 
@@ -82,7 +82,7 @@ async def cmd_continue(message: Message, state: FSMContext):
     Check if progress exists in several languages
 
      - Notify user if progress not found
-     - Form data and call _study if progress is only one
+     - Form data and call study() if progress is only one
      - Send keyboard to user for language choice if progress is more than one.
     """
 
@@ -101,7 +101,7 @@ async def cmd_continue(message: Message, state: FSMContext):
         language = progresses[0]
         await state.set_state(BotStates.studying)
         await state.update_data(tg_user_id=tg_user_id, language=language)
-        await _study(state)
+        await study(state)
     else:
         await message.answer(messages.WHICH_LANGUAGE,
                              reply_markup=keyboards.create_kb(progresses))
@@ -109,11 +109,11 @@ async def cmd_continue(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == 'continue')
 async def callback_continue(callback: CallbackQuery, state: FSMContext):
-    await _study(state)
+    await study(state)
     await callback.answer()
 
 
-async def _study(state: FSMContext):
+async def study(state: FSMContext):
     """
     Defines last completed lesson for this user in this language.
     Sends next lesson information, first question and provides with multiple
@@ -148,10 +148,12 @@ async def _study(state: FSMContext):
             first_question.get('answer3')
         ]
         correct_option = first_question.get('correct_answer')
+        wrong_answers = set()
 
         await state.update_data(last_completed_lesson=last_completed_lesson,
                                 questions=questions, current_question=0,
-                                correct_option=correct_option)
+                                correct_option=correct_option,
+                                wrong_answers=wrong_answers)
 
         await bot.send_message(chat_id=tg_user_id, text=question_text,
                                reply_markup=keyboards.create_kb(options),
@@ -163,17 +165,22 @@ async def study_callback(callback: CallbackQuery,
                          state: FSMContext):
     """
     Send questions to user.
-    After last question calls _study for the next lesson.
+    After last question calls study() for the next lesson.
     """
 
     state_data = await state.get_data()
     correct_option = state_data['correct_option']
+    question_number = state_data['current_question']
+    wrong_answers = state_data['wrong_answers']
 
     if callback.data != correct_option:
         await callback.answer(text=messages.TRY_AGAIN,
                               show_alert=True)
+        wrong_answers.add(question_number+1)
+        await state.update_data(wrong_answers=wrong_answers)
+
     else:
-        question_number = state_data['current_question'] + 1
+        question_number += 1
         questions = state_data['questions']
         if question_number < len(questions):
 
@@ -199,7 +206,12 @@ async def study_callback(callback: CallbackQuery,
             language = state_data['language']
             last_completed_lesson = state_data['last_completed_lesson'] + 1
 
-            await update_progress(tg_user_id, language, last_completed_lesson)
-            await _study(state)
+            payload = {'tg_user_id': tg_user_id, 'language': language,
+                       'last_completed_lesson': last_completed_lesson}
+            if wrong_answers:
+                payload['wrong_answers'] = wrong_answers
+            await update_progress(**payload)
+
+            await study(state)
 
     await callback.answer()

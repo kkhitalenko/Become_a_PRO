@@ -71,6 +71,7 @@ class ProgressGetUpdateDeleteSerializer(serializers.ModelSerializer):
     tg_user_id = serializers.StringRelatedField(read_only=True)
     language = serializers.StringRelatedField(read_only=True)
     last_completed_lesson = serializers.IntegerField()
+    wrong_answers = serializers.ListField(child=serializers.IntegerField())
 
     class Meta:
         model = Progress
@@ -85,10 +86,15 @@ class ProgressGetUpdateDeleteSerializer(serializers.ModelSerializer):
             serial_number=lesson_number
         )
         instance.last_completed_lesson = lesson
-        instance.save()
 
-        # wrong_answers = validated_data.get('wrong_answers',
-        #                                    instance.wrong_answers)
+        questions_with_wrong_answers = validated_data.get('wrong_answers')
+        if questions_with_wrong_answers:
+            for question in questions_with_wrong_answers:
+                question = Question.objects.get(lesson=lesson,
+                                                serial_number=question)
+                instance.wrong_answers.add(question)
+
+        instance.save()
 
         return instance
 

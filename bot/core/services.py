@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Set
 
 import aiohttp
 
@@ -36,12 +36,15 @@ async def get_progress(tg_user_id: int, language: str) -> Optional[int]:
 
 
 async def update_progress(tg_user_id: int, language: str,
-                          last_completed_lesson: int) -> int:
+                          last_completed_lesson: int,
+                          wrong_answers: Optional[Set[int]] = None) -> int:
     """Sending Django progress updating request. Returns status code."""
 
     async with aiohttp.ClientSession() as session:
         progress = f'{language}_{tg_user_id}'
         payload = {'last_completed_lesson': last_completed_lesson}
+        if wrong_answers:
+            payload['wrong_answers'] = list(wrong_answers)
         async with session.patch(f'{endpoints.PROGRESS}{progress}/',
                                  data=payload) as resp:
             return resp.status

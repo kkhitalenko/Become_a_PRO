@@ -16,6 +16,7 @@ class Question(models.Model):
         verbose_name = 'вопрос'
         verbose_name_plural = 'вопросы'
         ordering = ['serial_number']
+        indexes = [models.Index(fields=['lesson', 'serial_number'])]
         constraints = [
             models.UniqueConstraint(
                 fields=['lesson', 'text'],
