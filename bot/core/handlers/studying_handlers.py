@@ -21,6 +21,21 @@ async def cmd_start(message: Message):
                          reply_markup=keyboards.get_langeages_kb())
 
 
+@router.message(Command('switch_language'))
+async def cmd_switch_language(message: Message, state: FSMContext):
+    state_data = await state.get_data()
+    if state_data:
+        current_language = state_data.get('language')
+        others_languages = LANGUAGE_LIST.copy()
+        others_languages.remove(current_language)
+        await message.answer(messages.WHICH_LANGUAGE_SWITCH,
+                             reply_markup=keyboards.create_kb(others_languages))
+    else:
+        await message.answer(messages.WHICH_LANGUAGE_SWITCH,
+                             reply_markup=keyboards.get_langeages_kb())
+
+
+
 @router.callback_query(F.data.in_(LANGUAGE_LIST))
 async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
     tg_user_id = callback.from_user.id
@@ -103,7 +118,7 @@ async def cmd_continue(message: Message, state: FSMContext):
         await state.update_data(tg_user_id=tg_user_id, language=language)
         await study(state)
     else:
-        await message.answer(messages.WHICH_LANGUAGE,
+        await message.answer(messages.WHICH_LANGUAGE_CONTINUE,
                              reply_markup=keyboards.create_kb(progresses))
 
 
