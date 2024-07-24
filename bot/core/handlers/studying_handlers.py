@@ -18,7 +18,7 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     await message.answer(messages.START,
-                         reply_markup=keyboards.get_langeages_kb())
+                         reply_markup=keyboards.create_kb(LANGUAGE_LIST))
 
 
 @router.message(Command('switch_language'))
@@ -34,7 +34,7 @@ async def cmd_switch_language(message: Message, state: FSMContext):
         )
     else:
         await message.answer(messages.WHICH_LANGUAGE_SWITCH,
-                             reply_markup=keyboards.get_langeages_kb())
+                             reply_markup=keyboards.create_kb(LANGUAGE_LIST))
 
 
 @router.callback_query(F.data.in_(LANGUAGE_LIST))
@@ -108,7 +108,7 @@ async def cmd_continue(message: Message, state: FSMContext):
 
     if not progresses:
         await message.answer(messages.LETS_START,
-                             reply_markup=keyboards.get_langeages_kb())
+                             reply_markup=keyboards.create_kb(LANGUAGE_LIST))
     elif len(progresses) == 1:
         language = progresses[0]
         await state.set_state(BotStates.studying)

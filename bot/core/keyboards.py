@@ -2,16 +2,6 @@ from aiogram.types import List
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-def get_langeages_kb():
-    """Returns the keyboard with 'Python', 'Go' and 'Rust' buttons."""
-
-    kb = InlineKeyboardBuilder()
-    kb.button(text='Python', callback_data='python')
-    kb.button(text='Go', callback_data='go')
-    kb.button(text='Rust', callback_data='rust')
-    return kb.as_markup()
-
-
 def get_yes_no_kb():
     """Returns the keyboard with 'yes' and 'no' buttons."""
 
@@ -35,5 +25,5 @@ def create_kb(buttons: List[str]):
 
     kb = InlineKeyboardBuilder()
     for btn in buttons:
-        kb.button(text=btn, callback_data=btn)
+        kb.button(text=btn.title(), callback_data=btn)
     return kb.as_markup()
