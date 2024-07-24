@@ -2,6 +2,7 @@ from typing import Optional, Set
 
 import aiohttp
 
+from config import LANGUAGE_LIST
 from core import endpoints
 
 
@@ -33,6 +34,17 @@ async def get_progress(tg_user_id: int, language: str) -> Optional[int]:
         async with session.get(progress_url) as resp:
             result = await resp.json()
             return result.get('last_completed_lesson')
+
+
+async def get_progress_list(tg_user_id: int) -> list:
+    """Returns list of existing progress."""
+
+    progresses = []
+    for language in LANGUAGE_LIST:
+        progress = await get_progress(tg_user_id, language)
+        if progress is not None:
+            progresses.append(language)
+    return progresses
 
 
 async def update_progress(tg_user_id: int, language: str,

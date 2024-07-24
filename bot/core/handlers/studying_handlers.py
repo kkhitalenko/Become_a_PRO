@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery, Message
 from config import LANGUAGE_LIST
 from core import keyboards, messages
 from core.services import (create_progress, get_description, get_lesson,
-                           get_progress, update_progress)
+                           get_progress, get_progress_list, update_progress)
 from core.states import BotStates
 from main import bot
 
@@ -28,12 +28,13 @@ async def cmd_switch_language(message: Message, state: FSMContext):
         current_language = state_data.get('language')
         others_languages = LANGUAGE_LIST.copy()
         others_languages.remove(current_language)
-        await message.answer(messages.WHICH_LANGUAGE_SWITCH,
-                             reply_markup=keyboards.create_kb(others_languages))
+        await message.answer(
+            messages.WHICH_LANGUAGE_SWITCH,
+            reply_markup=keyboards.create_kb(others_languages)
+        )
     else:
         await message.answer(messages.WHICH_LANGUAGE_SWITCH,
                              reply_markup=keyboards.get_langeages_kb())
-
 
 
 @router.callback_query(F.data.in_(LANGUAGE_LIST))
@@ -103,11 +104,7 @@ async def cmd_continue(message: Message, state: FSMContext):
 
     tg_user_id = message.from_user.id
 
-    progresses = []
-    for language in LANGUAGE_LIST:
-        progress = await get_progress(tg_user_id, language)
-        if progress is not None:
-            progresses.append(language)
+    progresses = await get_progress_list(tg_user_id)
 
     if not progresses:
         await message.answer(messages.LETS_START,
