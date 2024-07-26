@@ -3,8 +3,8 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from config import ADMIN_TG_ID
-from core import messages
+from config import ADMIN_TG_ID, LANGUAGE_LIST
+from core import keyboards, messages
 from core.states import BotStates
 
 
@@ -36,3 +36,19 @@ async def send_feedback_to_admin(message: Message, state: FSMContext):
     )
     await state.clear()
     await message.answer(messages.THANKS_FOR_FEEDBACK)
+
+
+@router.message(Command('switch_language'))
+async def cmd_switch_language(message: Message, state: FSMContext):
+    state_data = await state.get_data()
+    if state_data:
+        current_language = state_data.get('language')
+        others_languages = LANGUAGE_LIST.copy()
+        others_languages.remove(current_language)
+        await message.answer(
+            messages.WHICH_LANGUAGE_SWITCH,
+            reply_markup=keyboards.create_kb(others_languages)
+        )
+    else:
+        await message.answer(messages.WHICH_LANGUAGE_SWITCH,
+                             reply_markup=keyboards.create_kb(LANGUAGE_LIST))
