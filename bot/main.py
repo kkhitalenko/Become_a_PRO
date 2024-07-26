@@ -14,9 +14,10 @@ bot = Bot(token=TOKEN)
 
 async def main():
     from core.handlers.common_handlers import router as common_router
-    from core.handlers.studying_handlers import router as studying_router
+    from core.handlers.repeat_handlers import router as repeat_router
+    from core.handlers.studying_handlers import router as study_router
 
-    dp.include_routers(common_router, studying_router)
+    dp.include_routers(common_router, study_router, repeat_router)
     await set_commands(bot)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

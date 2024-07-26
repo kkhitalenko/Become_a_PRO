@@ -6,4 +6,5 @@ class BotStates(StatesGroup):
 
     testing = State()
     studying = State()
+    repeating = State()
     feedback = State()

@@ -30,6 +30,8 @@ WHICH_LANGUAGE_SWITCH = 'На какой язык ты хочешь перекл
 
 WHICH_LANGUAGE_REPEAT = 'Какой язык ты хочешь повторить?'
 
+NOTHING_TO_REPEAT = 'Кажется, для тебя нет ни одной сложной темы'
+
 MESSAGE_TO_ADMIN = 'Пользователь с id={} написал "{}"'
 
 ALREADY_LEARNED = 'Ты уже начал учить {}, что ты хочешь?'

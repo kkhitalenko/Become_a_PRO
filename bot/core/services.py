@@ -70,3 +70,13 @@ async def get_lesson(language: str, last_completed_lesson: int):
             f'{endpoints.LESSONS}{language}/{last_completed_lesson+1}/',
         ) as resp:
             return await resp.json()
+
+
+async def get_wrong_answered_questions(tg_user_id: int, language: str):
+    """Returns json including wrong answered questions."""
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f'{endpoints.PROGRESS}{language}_{tg_user_id}/wrong_answered_questions/',
+        ) as resp:
+            return await resp.json()

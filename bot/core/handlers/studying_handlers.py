@@ -49,7 +49,7 @@ async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
     if progress:
         await callback.message.answer(
             messages.ALREADY_LEARNED.format(language.title()),
-            reply_markup=keyboards.get_continue_or_reset_kb()
+            reply_markup=keyboards.get_continue_repeat_reset_kb()
         )
     else:
         await callback.message.answer(
