@@ -77,6 +77,7 @@ async def get_wrong_answered_questions(tg_user_id: int, language: str):
 
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f'{endpoints.PROGRESS}{language}_{tg_user_id}/wrong_answered_questions/',
+            f'{endpoints.PROGRESS}{language}_{tg_user_id}/'
+            f'wrong_answered_questions/',
         ) as resp:
             return await resp.json()
