@@ -31,7 +31,7 @@ def create_kb(buttons: List[str]):
     return kb.as_markup()
 
 
-class LanguagesRepeatCbData(CallbackData, prefix='repeat'):
+class LanguagesRepeatCbData(CallbackData, prefix='repeat', sep='_'):
     language: str
 
 

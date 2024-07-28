@@ -1,5 +1,4 @@
-# from aiogram import F, Router
-from aiogram import Router
+from aiogram import F, Router
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -10,6 +9,7 @@ from core import keyboards, messages
 from core.services import get_progress_list, get_wrong_answered_questions
 from core.states import BotStates
 from main import bot
+
 
 router = Router()
 
@@ -45,14 +45,15 @@ async def cmd_repeat(message: Message, state: FSMContext):
             )
 
 
-@router.callback_query(keyboards.LanguagesRepeatCbData.filter())
-async def callback_cmd_repeat(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(F.data.startswith('repeat'))
+async def cb_cmd_repeat(callback: CallbackQuery, state: FSMContext):
     tg_user_id = callback.from_user.id
-    language = callback.data.split(':')[1]
+    language = callback.data.split('_')[1]
 
     await state.set_state(BotStates.repeating)
     await state.update_data(tg_user_id=tg_user_id, language=language)
     await repeat(state)
+
     await callback.answer()
 
 
