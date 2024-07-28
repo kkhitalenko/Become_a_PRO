@@ -12,13 +12,13 @@ def get_yes_no_kb():
     return kb.as_markup()
 
 
-def get_continue_repeat_reset_kb():
+def get_continue_repeat_reset_kb(language: str):
     """Returns the keyboard with 'continue', 'repeat' and 'reset' buttons."""
 
     kb = InlineKeyboardBuilder()
-    kb.button(text='продолжить', callback_data='continue')
-    kb.button(text='повторить', callback_data='repeat')
-    kb.button(text='начать заново', callback_data='reset')
+    kb.button(text='продолжить', callback_data=f'continue_{language}')
+    kb.button(text='повторить', callback_data=f'repeat_{language}')
+    kb.button(text='начать заново', callback_data=f'reset_{language}')
     return kb.as_markup()
 
 

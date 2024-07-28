@@ -26,16 +26,15 @@ async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
     tg_user_id = callback.from_user.id
     language = callback.data
 
-    await state.set_state(BotStates.studying)
-    await state.update_data(tg_user_id=tg_user_id, language=language)
-
     progress = await get_progress(tg_user_id, language)
     if progress:
         await callback.message.answer(
             messages.ALREADY_LEARNED.format(language.title()),
-            reply_markup=keyboards.get_continue_repeat_reset_kb()
+            reply_markup=keyboards.get_continue_repeat_reset_kb(language)
         )
     else:
+        await state.set_state(BotStates.studying)
+        await state.update_data(tg_user_id=tg_user_id, language=language)
         await callback.message.answer(
             messages.HAVE_YOU_ALREADY_LEARNED.format(language.title()),
             reply_markup=keyboards.get_yes_no_kb()
@@ -43,11 +42,10 @@ async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-@router.callback_query(F.data.in_({'yes', 'no', 'reset'}), BotStates.studying)
+@router.callback_query(F.data.in_({'yes', 'no'}), BotStates.studying)
 async def set_progress(callback: CallbackQuery, state: FSMContext):
     """
-    Sets the initial progress if user has not studied the language before
-    or if user wants to reset the progress.
+    Sets the initial progress if user has not studied the language before.
     Otherwise goes into testing mode.
     Eventually goes into study mode.
     """
@@ -58,17 +56,36 @@ async def set_progress(callback: CallbackQuery, state: FSMContext):
 
     if callback.data == 'yes':
         last_completed_lesson = await test_the_user(tg_user_id, language)
-        await create_progress(tg_user_id, language, last_completed_lesson)
+
     elif callback.data == 'no':
         last_completed_lesson = 0
         description = await get_description(language)
         await callback.message.answer(description)
-        await create_progress(tg_user_id, language, last_completed_lesson)
-    elif callback.data == 'reset':
+
+    await create_progress(tg_user_id, language, last_completed_lesson)
+    await study(state)
+
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith('cont') | F.data.startswith('reset'))
+async def cb_continue_reset(callback: CallbackQuery, state: FSMContext):
+    """
+    Sets the initial progress if user wants to reset the progress.
+    Eventually goes into study mode.
+    """
+
+    tg_user_id = callback.from_user.id
+    language = callback.data.split('_')[1]
+
+    if callback.data.startswith('reset'):
         last_completed_lesson = 0
         await update_progress(tg_user_id, language, last_completed_lesson)
 
+    await state.set_state(BotStates.studying)
+    await state.update_data(tg_user_id=tg_user_id, language=language)
     await study(state)
+
     await callback.answer()
 
 
@@ -101,12 +118,6 @@ async def cmd_continue(message: Message, state: FSMContext):
     else:
         await message.answer(messages.WHICH_LANGUAGE_CONTINUE,
                              reply_markup=keyboards.create_kb(progresses))
-
-
-@router.callback_query(F.data == 'continue')
-async def callback_continue(callback: CallbackQuery, state: FSMContext):
-    await study(state)
-    await callback.answer()
 
 
 async def study(state: FSMContext):
