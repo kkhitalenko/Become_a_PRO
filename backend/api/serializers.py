@@ -12,7 +12,8 @@ class LanguageSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ['text', 'answer1', 'answer2', 'answer3', 'correct_answer']
+        fields = ['id', 'text', 'answer1', 'answer2', 'answer3',
+                  'correct_answer']
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -102,3 +103,11 @@ class ProgressGetUpdateDeleteSerializer(serializers.ModelSerializer):
         return ProgressSerializer(
             instance, context={'request': self.context.get('request')}
         ).data
+
+
+class WrongAnsweredQuestionsSerializer(serializers.ModelSerializer):
+    wrong_answers = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Progress
+        fields = ['wrong_answers']

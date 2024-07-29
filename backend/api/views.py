@@ -1,13 +1,14 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import generics, status, viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from api.serializers import (LanguageSerializer, LessonSerializer,
                              ProgressCreateSerializer,
-                             ProgressGetUpdateDeleteSerializer)
-from lessons.models import Language, Lesson, Progress
+                             ProgressGetUpdateDeleteSerializer,
+                             WrongAnsweredQuestionsSerializer)
+from lessons.models import Language, Lesson, Progress, Question
 
 
 class LanguageDetail(generics.RetrieveAPIView):
@@ -28,6 +29,27 @@ class ProgressViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return ProgressCreateSerializer
         return ProgressGetUpdateDeleteSerializer
+
+    @action(detail=True, methods=['get', 'patch'])
+    def wrong_answered_questions(self, request, slug):
+        language, tg_user_id = slug.split('_')
+        language = Language.objects.get(title=language)
+        progress = Progress.objects.get(language=language,
+                                        tg_user_id=tg_user_id)
+
+        if request.method == 'GET':
+            serializer = WrongAnsweredQuestionsSerializer(progress)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        elif request.method == 'PATCH':
+            wrong_answered_questions = request.data.get('wrong_answers')
+
+            progress.wrong_answers.clear()
+            if wrong_answered_questions:
+                new_questions = [Question.objects.get(id=question)
+                                 for question in wrong_answered_questions]
+                progress.wrong_answers.set(new_questions)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view()
