@@ -23,6 +23,12 @@ async def cmd_start(message: Message):
 
 @router.callback_query(F.data.in_(LANGUAGE_LIST))
 async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
+    """
+    If user has already studied the language,
+    sends keyboard with buttons: continue, repeat or reset.
+    Otherwise sets the initial progress and goes into study mode.
+    """
+
     tg_user_id = callback.from_user.id
     language = callback.data
 
@@ -33,37 +39,15 @@ async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
             reply_markup=keyboards.get_continue_repeat_reset_kb(language)
         )
     else:
-        await state.set_state(BotStates.studying)
-        await state.update_data(tg_user_id=tg_user_id, language=language)
-        await callback.message.answer(
-            messages.HAVE_YOU_ALREADY_LEARNED.format(language.title()),
-            reply_markup=keyboards.get_yes_no_kb()
-        )
-    await callback.answer()
-
-
-@router.callback_query(F.data.in_({'yes', 'no'}), BotStates.studying)
-async def set_progress(callback: CallbackQuery, state: FSMContext):
-    """
-    Sets the initial progress if user has not studied the language before.
-    Otherwise goes into testing mode.
-    Eventually goes into study mode.
-    """
-
-    state_data = await state.get_data()
-    tg_user_id = state_data['tg_user_id']
-    language = state_data['language']
-
-    if callback.data == 'yes':
-        last_completed_lesson = await test_the_user(tg_user_id, language)
-
-    elif callback.data == 'no':
-        last_completed_lesson = 0
         description = await get_description(language)
         await callback.message.answer(description)
 
-    await create_progress(tg_user_id, language, last_completed_lesson)
-    await study(state)
+        await state.set_state(BotStates.studying)
+        await state.update_data(tg_user_id=tg_user_id, language=language)
+
+        last_completed_lesson = 0
+        await create_progress(tg_user_id, language, last_completed_lesson)
+        await study(state)
 
     await callback.answer()
 
@@ -87,10 +71,6 @@ async def cb_continue_reset(callback: CallbackQuery, state: FSMContext):
     await study(state)
 
     await callback.answer()
-
-
-async def test_the_user(tg_user_id: int, language: str):
-    pass
 
 
 @router.message(Command('continue'))

@@ -3,15 +3,6 @@ from aiogram.types import List
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-def get_yes_no_kb():
-    """Returns the keyboard with 'yes' and 'no' buttons."""
-
-    kb = InlineKeyboardBuilder()
-    kb.button(text='да', callback_data='yes')
-    kb.button(text='нет', callback_data='no')
-    return kb.as_markup()
-
-
 def get_continue_repeat_reset_kb(language: str):
     """Returns the keyboard with 'continue', 'repeat' and 'reset' buttons."""
 

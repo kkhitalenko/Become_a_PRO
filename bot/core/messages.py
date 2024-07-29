@@ -36,6 +36,4 @@ MESSAGE_TO_ADMIN = 'Пользователь с id={} написал "{}"'
 
 ALREADY_LEARNED = 'Ты уже начал учить {}, что ты хочешь?'
 
-HAVE_YOU_ALREADY_LEARNED = 'Ты изучал ранее {}?'
-
 LESSON = '<b>Тема: {}</b>'
