@@ -6,7 +6,8 @@ from aiogram.types import CallbackQuery, Message
 
 from config import LANGUAGE_LIST
 from core import keyboards, messages
-from core.services import get_progress_list, get_wrong_answered_questions
+from core.services import (get_progress_list, get_wrong_answered_questions,
+                           update_wrong_answered_questions)
 from core.states import BotStates
 from main import bot
 
@@ -73,11 +74,12 @@ async def repeat(state: FSMContext):
                 first_question.get('answer3')
             ]
         correct_option = first_question.get('correct_answer')
-        question_ids = [question.get('id') for question in questions]
+        new_question_ids = set()
 
-        await state.update_data(questions=questions, current_question=0,
+        await state.update_data(questions=questions,
+                                question_number=0,
                                 correct_option=correct_option,
-                                question_ids=question_ids)
+                                new_question_ids=new_question_ids)
 
         await bot.send_message(chat_id=tg_user_id, text=question_text,
                                reply_markup=keyboards.create_kb(options),
@@ -91,4 +93,43 @@ async def repeat(state: FSMContext):
 
 @router.callback_query(BotStates.repeating)
 async def repeat_callback(callback: CallbackQuery, state: FSMContext):
-    pass
+    state_data = await state.get_data()
+    questions = state_data['questions']
+    question_number = state_data['question_number']
+    correct_option = state_data['correct_option']
+    new_question_ids = state_data['new_question_ids']
+
+    if callback.data != correct_option:
+        new_question_ids.add(questions[question_number]['id'])
+        await callback.answer(text=messages.TRY_AGAIN,
+                              show_alert=True)
+        await state.update_data(new_question_ids=new_question_ids)
+
+    else:
+        question_number += 1
+        if question_number < len(questions):
+            question = questions[question_number]
+            question_text = question.get('text')
+            options = [
+                question.get('answer1'),
+                question.get('answer2'),
+                question.get('answer3')
+            ]
+            correct_option = question.get('correct_answer')
+            await state.update_data(correct_option=correct_option,
+                                    question_number=question_number)
+            await callback.message.answer(
+                text=question_text,
+                reply_markup=keyboards.create_kb(options),
+                parse_mode=ParseMode.MARKDOWN
+            )
+
+        else:
+            tg_user_id = state_data['tg_user_id']
+            language = state_data['language']
+            payload = {'tg_user_id': tg_user_id, 'language': language,
+                       'wrong_answers': new_question_ids}
+            await update_wrong_answered_questions(**payload)
+            await repeat(state)
+
+    await callback.answer()

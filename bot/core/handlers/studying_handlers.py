@@ -167,7 +167,7 @@ async def study(state: FSMContext):
                                parse_mode=ParseMode.MARKDOWN)
 
 
-@router.callback_query(BotStates.studying)
+@router.callback_query(BotStates.studying, ~F.data.startswith('repeat'))
 async def study_callback(callback: CallbackQuery,
                          state: FSMContext):
     """

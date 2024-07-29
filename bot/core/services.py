@@ -81,3 +81,19 @@ async def get_wrong_answered_questions(tg_user_id: int, language: str):
             f'wrong_answered_questions/',
         ) as resp:
             return await resp.json()
+
+
+async def update_wrong_answered_questions(tg_user_id: int, language: str,
+                                          wrong_answers: Optional[Set[int]]):
+    """Sending Django progress updating request. Returns status code."""
+
+    async with aiohttp.ClientSession() as session:
+        payload = {}
+        if wrong_answers:
+            payload['wrong_answers'] = list(wrong_answers)
+
+        async with session.patch(
+            f'{endpoints.PROGRESS}{language}_{tg_user_id}/'
+            f'wrong_answered_questions/', data=payload
+        ) as resp:
+            return resp.status

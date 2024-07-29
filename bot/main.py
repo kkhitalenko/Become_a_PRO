@@ -14,7 +14,7 @@ bot = Bot(token=TOKEN)
 
 async def main():
     from core.handlers.common_handlers import router as common_router
-    from core.handlers.repeat_handlers import router as repeat_router
+    from core.handlers.repeating_handlers import router as repeat_router
     from core.handlers.studying_handlers import router as study_router
 
     dp.include_routers(common_router, study_router, repeat_router)
