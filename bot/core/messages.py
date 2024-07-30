@@ -37,3 +37,11 @@ MESSAGE_TO_ADMIN = 'Пользователь с id={} написал "{}"'
 ALREADY_LEARNED = 'Ты уже начал учить {}, что ты хочешь?'
 
 LESSON = '<b>Тема: {}</b>'
+
+YOU_CHOSE = 'Ты выбрал {}'
+
+START_AGAIN = 'Начнем сначала'
+
+CONTINUE = 'Продолжим'
+
+REPEAT = 'Повторяем'

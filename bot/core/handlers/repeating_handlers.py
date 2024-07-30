@@ -17,6 +17,15 @@ router = Router()
 
 @router.message(Command('repeat'))
 async def cmd_repeat(message: Message, state: FSMContext):
+    """
+    If state exists, gets language, tg_user_id and goes into repeat mode.
+
+    Otherwise check if progress exists in several languages
+     - Notify user if progress not found
+     - Form data and call repeat() if progress is only one
+     - Send keyboard to user for language choice if progress is more than one.
+    """
+
     state_data = await state.get_data()
 
     if state_data:
@@ -48,8 +57,12 @@ async def cmd_repeat(message: Message, state: FSMContext):
 
 @router.callback_query(F.data.startswith('repeat'))
 async def cb_cmd_repeat(callback: CallbackQuery, state: FSMContext):
+    """Gets tg_user_id and language and goes into repeat mode."""
+
     tg_user_id = callback.from_user.id
     language = callback.data.split('_')[1]
+
+    await callback.message.edit_text(messages.REPEAT)
 
     await state.set_state(BotStates.repeating)
     await state.update_data(tg_user_id=tg_user_id, language=language)
@@ -59,6 +72,11 @@ async def cb_cmd_repeat(callback: CallbackQuery, state: FSMContext):
 
 
 async def repeat(state: FSMContext):
+    """
+    Defines wrong answered questions for this user in this language.
+    Sends first question and provides with multiple options choice keyboard.
+    """
+
     state_data = await state.get_data()
     tg_user_id = state_data['tg_user_id']
     language = state_data['language']
@@ -93,6 +111,13 @@ async def repeat(state: FSMContext):
 
 @router.callback_query(BotStates.repeating)
 async def repeat_callback(callback: CallbackQuery, state: FSMContext):
+    """
+    Compares the received answer with the correct one
+    - if they are not equal, notify user
+    - otherwise, asks user the next question
+    After last question updates the progress.
+    """
+
     state_data = await state.get_data()
     questions = state_data['questions']
     question_number = state_data['question_number']

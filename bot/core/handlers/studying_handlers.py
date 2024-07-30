@@ -32,6 +32,10 @@ async def prepare_data_for_study(callback: CallbackQuery, state: FSMContext):
     tg_user_id = callback.from_user.id
     language = callback.data
 
+    await callback.message.edit_text(
+        messages.YOU_CHOSE.format(language.title())
+    )
+
     progress = await get_progress(tg_user_id, language)
     if progress:
         await callback.message.answer(
@@ -65,6 +69,9 @@ async def cb_continue_reset(callback: CallbackQuery, state: FSMContext):
     if callback.data.startswith('reset'):
         last_completed_lesson = 0
         await update_progress(tg_user_id, language, last_completed_lesson)
+        await callback.message.edit_text(messages.START_AGAIN)
+    else:
+        await callback.message.edit_text(messages.CONTINUE)
 
     await state.set_state(BotStates.studying)
     await state.update_data(tg_user_id=tg_user_id, language=language)
@@ -151,8 +158,12 @@ async def study(state: FSMContext):
 async def study_callback(callback: CallbackQuery,
                          state: FSMContext):
     """
-    Send questions to user.
+    Compares the received answer with the correct one
+    - if they are not equal, notify user
+    - otherwise, asks user the next question
     After last question calls study() for the next lesson.
+
+    Wrong answered questions are saved for repeating mode.
     """
 
     state_data = await state.get_data()
