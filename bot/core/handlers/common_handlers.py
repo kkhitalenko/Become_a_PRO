@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import LinkPreviewOptions, Message
 
 from config import ADMIN_TG_ID, LANGUAGE_LIST
 from core import keyboards, messages
@@ -18,7 +18,9 @@ async def cmd_help(message: Message):
 
 @router.message(Command('github'))
 async def cmd_github(message: Message):
-    await message.answer(messages.GITHUB_URL)
+    option = LinkPreviewOptions(is_disabled=True)
+    await message.answer(messages.GITHUB_URL,
+                         link_preview_options=option)
 
 
 @router.message(Command('feedback'))
