@@ -5,11 +5,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from config import LANGUAGE_LIST
-from core import keyboards, messages
+from core import bot, keyboards, messages
 from core.services import (create_progress, get_description, get_lesson,
                            get_progress, get_progress_list, update_progress)
 from core.states import BotStates
-from main import bot
 
 
 router = Router()
