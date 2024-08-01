@@ -82,28 +82,43 @@ async def cb_continue_reset(callback: CallbackQuery, state: FSMContext):
 @router.message(Command('continue'))
 async def cmd_continue(message: Message, state: FSMContext):
     """
-    Check if progress exists in several languages
+    If state exists, gets language, tg_user_id and goes into study mode.
+
+    Otherwise check if progress exists in several languages
 
      - Notify user if progress not found
      - Form data and call study() if progress is only one
      - Send keyboard to user for language choice if progress is more than one.
     """
+    state_data = await state.get_data()
 
-    tg_user_id = message.from_user.id
-
-    progresses = await get_progress_list(tg_user_id)
-
-    if not progresses:
-        await message.answer(messages.LETS_START,
-                             reply_markup=keyboards.create_kb(LANGUAGE_LIST))
-    elif len(progresses) == 1:
-        language = progresses[0]
+    if state_data:
+        tg_user_id = state_data['tg_user_id']
+        language = state_data['language']
         await state.set_state(BotStates.studying)
         await state.update_data(tg_user_id=tg_user_id, language=language)
         await study(state)
+
     else:
-        await message.answer(messages.WHICH_LANGUAGE_CONTINUE,
-                             reply_markup=keyboards.create_kb(progresses))
+        tg_user_id = message.from_user.id
+        progresses = await get_progress_list(tg_user_id)
+
+        if not progresses:
+            await message.answer(
+                messages.LETS_START,
+                reply_markup=keyboards.create_kb(LANGUAGE_LIST)
+            )
+
+        elif len(progresses) == 1:
+            language = progresses[0]
+            await state.set_state(BotStates.studying)
+            await state.update_data(tg_user_id=tg_user_id, language=language)
+            await study(state)
+        else:
+            await message.answer(
+                messages.WHICH_LANGUAGE_CONTINUE,
+                reply_markup=keyboards.create_kb(progresses)
+            )
 
 
 async def study(state: FSMContext):
