@@ -117,7 +117,9 @@ async def cmd_continue(message: Message, state: FSMContext):
         else:
             await message.answer(
                 messages.WHICH_LANGUAGE_CONTINUE,
-                reply_markup=keyboards.create_kb(progresses)
+                reply_markup=keyboards.create_languages_kb(
+                    progresses, 'continue'
+                )
             )
 
 

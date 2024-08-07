@@ -37,11 +37,13 @@ async def cmd_repeat(message: Message, state: FSMContext):
     else:
         tg_user_id = message.from_user.id
         progresses = await get_progress_list(tg_user_id)
+
         if not progresses:
             await message.answer(
                 messages.LETS_START,
                 reply_markup=keyboards.create_kb(LANGUAGE_LIST)
             )
+
         elif len(progresses) == 1:
             language = progresses[0]
             await state.set_state(BotStates.repeating)
@@ -50,7 +52,9 @@ async def cmd_repeat(message: Message, state: FSMContext):
         else:
             await message.answer(
                 messages.WHICH_LANGUAGE_REPEAT,
-                reply_markup=keyboards.create_languages_kb(progresses)
+                reply_markup=keyboards.create_languages_kb(
+                    progresses, 'repeat'
+                )
             )
 
 

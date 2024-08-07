@@ -26,11 +26,21 @@ class LanguagesRepeatCbData(CallbackData, prefix='repeat', sep='_'):
     language: str
 
 
-def create_languages_kb(language_list: List[str]):
-    """Returns the keyboard with language buttons and prefix='repeat'."""
+class LanguagesContinueCbData(CallbackData, prefix='continue', sep='_'):
+    language: str
+
+
+def create_languages_kb(language_list: List[str], action: str):
+    """
+    Returns the keyboard with language buttons
+    and cbdata as action_language'.
+    """
+
+    actions_cbdata = {'repeat': LanguagesRepeatCbData,
+                      'continue': LanguagesContinueCbData}
 
     kb = InlineKeyboardBuilder()
     for language in language_list:
-        cbdata = LanguagesRepeatCbData(language=language)
+        cbdata = actions_cbdata[action](language=language)
         kb.button(text=language.title(), callback_data=cbdata.pack())
     return kb.as_markup()
