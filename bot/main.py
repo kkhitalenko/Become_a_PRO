@@ -1,16 +1,20 @@
 import asyncio
 import logging
 
-from core import bot, dp
+import aiohttp
+
+from core import bot, bot_storage, dp
 from core.commands import set_commands
 from core.handlers import main_router
 
 
 async def main():
-    dp.include_router(main_router)
-    await set_commands(bot)
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    bot_storage['session'] = aiohttp.ClientSession()
+    async with bot_storage['session']:
+        dp.include_router(main_router)
+        await set_commands(bot)
+        await bot.delete_webhook(drop_pending_updates=True)
+        await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
