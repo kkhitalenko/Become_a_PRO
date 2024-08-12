@@ -1,11 +1,17 @@
-import os
+from pydantic import SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv
+
+class Settings(BaseSettings):
+    TOKEN: SecretStr
+    ADMIN_TG_ID: SecretStr
+    model_config = SettingsConfigDict(env_file='.env',
+                                      env_file_encoding='utf-8')
 
 
-load_dotenv()
+config = Settings()
+ADMIN_TG_ID = config.ADMIN_TG_ID.get_secret_value()
+TOKEN = config.TOKEN.get_secret_value()
 
-ADMIN_TG_ID = os.getenv('ADMIN_TG_ID')
-TOKEN = os.getenv('TOKEN')
 
 LANGUAGE_LIST = ['python', 'go', 'rust']
