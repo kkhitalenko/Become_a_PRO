@@ -147,7 +147,8 @@ async def study(state: FSMContext):
                                text=messages.LESSON.format(lesson_title),
                                parse_mode=ParseMode.HTML)
         await bot.send_message(chat_id=tg_user_id,
-                               text=lesson.get('theory'))
+                               text=lesson.get('theory'),
+                               parse_mode=ParseMode.MARKDOWN)
 
         questions = lesson.get('questions_of_lesson')
         first_question = questions[0]
@@ -194,6 +195,10 @@ async def study_callback(callback: CallbackQuery,
         await state.update_data(wrong_answers=wrong_answers)
 
     else:
+        await callback.message.edit_reply_markup()
+        await callback.message.answer(
+            messages.CORRECT_OPTION.format(correct_option)
+        )
         question_number += 1
         questions = state_data['questions']
         if question_number < len(questions):

@@ -45,3 +45,5 @@ START_AGAIN = 'Начнем сначала'
 CONTINUE = 'Продолжим'
 
 REPEAT = 'Повторяем'
+
+CORRECT_OPTION = 'Верный ответ: {}'
