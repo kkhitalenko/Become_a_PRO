@@ -1,13 +1,55 @@
 services:
 
-  backend:
-    build: ../backend/
-    ports:
-      - "8000:8000"
+  postgres:
+    container_name: BecomeaPRO_postgres
+    image: postgres:16.4-alpine
     restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+    env_file:
+      - .env
 
-  bot:
-    build: ../bot/
+
+  backend:
+    container_name: BecomeaPRO_backend
+    build: ../backend/
     restart: always
+    volumes:
+      - static_value:/app/static/
+      - media_value:/app/media/
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+
+  nginx:
+    container_name: BecomeaPRO_nginx
+    image: nginx:1.21.3-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
     depends_on:
       - backend
+
+volumes:
+  static_value:
+  media_value:
+
+
+  # bot:
+  #   container_name: BecomeaPRO_bot
+  #   build: ../bot/
+  #   restart: always
+  #   depends_on:
+  #     - backend
+
+  # redis:
+  #   container_name: BecomeaPRO_redis
+  #   image: redis:5-alpine
+  #   restart: always
+    # volumes:
+    #   - redis-data:/data

@@ -9,4 +9,4 @@ COPY ./ .
 RUN poetry config virtualenvs.create false
 RUN poetry install
 
-CMD ["python", "manage.py", "runserver", "0:8000"] 
+CMD ["gunicorn", "Become_a_PRO.wsgi:application", "--bind", "0:8000"]
