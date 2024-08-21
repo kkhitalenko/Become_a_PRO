@@ -59,10 +59,9 @@
 - Poetry
 - Pre-commit(ruff)
 - Python
-- Django
-- DRF
-- Aiogram
-- Aiohttp
+- Django, DRF
+- Gunicorn, Nginx
+- Aiogram, Aiohttp
 - Postgres
 - Docker, Docker Compose
 - Github Actions(CI:flake, isort)
