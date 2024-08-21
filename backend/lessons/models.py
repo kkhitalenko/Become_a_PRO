@@ -5,11 +5,11 @@ class Question(models.Model):
     lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE,
                                verbose_name='урок',
                                related_name='questions_of_lesson')
-    text = models.TextField('Вопрос')
-    answer1 = models.CharField('Вариант 1', max_length=255)
-    answer2 = models.CharField('Вариант 2', max_length=255)
-    answer3 = models.CharField('Вариант 3', max_length=255)
-    correct_answer = models.CharField('Верный ответ', max_length=255)
+    text = models.TextField('Вопрос', max_length=4096)
+    answer1 = models.CharField('Вариант 1', max_length=64)
+    answer2 = models.CharField('Вариант 2', max_length=64)
+    answer3 = models.CharField('Вариант 3', max_length=64)
+    correct_answer = models.CharField('Верный ответ', max_length=64)
     serial_number = models.PositiveIntegerField('Номер вопроса в уроке')
 
     class Meta:
@@ -36,7 +36,7 @@ class Lesson(models.Model):
     language = models.ForeignKey('Language', on_delete=models.CASCADE,
                                  verbose_name='язык', related_name='lessons')
     title = models.CharField('Урок', max_length=50)
-    theory = models.TextField('Теория')
+    theory = models.TextField('Теория', max_length=4096)
     serial_number = models.PositiveIntegerField('Номер урока в языке')
 
     class Meta:
@@ -60,7 +60,7 @@ class Lesson(models.Model):
 
 class Language(models.Model):
     title = models.CharField('Язык', max_length=50, unique=True)
-    description = models.TextField('Описание')
+    description = models.TextField('Описание', max_length=4096)
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
