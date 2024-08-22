@@ -21,3 +21,33 @@ django-debug-toolbar = "^4.3.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+fix = true
+line-length = 79
+show-fixes = true
+target-version = "py311"
+exclude = ["*/migrations/"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+extend-select = [
+    "I",   # isort
+    "N",   # pep8-naming
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "PIE", # flake8-pie
+    "T20", # flake8-print
+    "PTH", # flake8-use-pathlib 
+    "RUF", # ruff checks
+]
+ignore = ["RUF001", "RUF002","RUF012", "N806", "N999", "PTH118"]
+
+
+[tool.ruff.lint.isort]
+lines-between-types = 0
+lines-after-imports = 2
+known-first-party = ["lessons"]
+known-third-party = ["poetry.core"]
