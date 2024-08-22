@@ -23,10 +23,10 @@
    
 </details>
 
-<details>
-   <summary>Для запуска необходимо</summary> 
-
 Необходимые технологии: Docker, Docker-Compose
+
+<details>
+   <summary>При первом запуске необходимо</summary> 
 
 - Клонировать репозиторий и перейти в него в командной строке:
    ```
@@ -54,6 +54,15 @@
 </details>
 
 <details>
+
+   <summary>При повторном запуске</summary> 
+   ```
+   docker-compose up -d 
+   ```
+
+</details>
+
+<details>
    <summary>Используемые инструменты и технологии</summary> 
    
 - Poetry
@@ -68,6 +77,5 @@
 <!-- Celery --> 
 <!-- Redis --> 
 <!-- Pytest --> 
-<!-- K8s --> 
 
 </details>
