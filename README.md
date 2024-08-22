@@ -23,43 +23,45 @@
    
 </details>
 
-Необходимые технологии: Docker, Docker-Compose
-
 <details>
+   <summary>Как запустить?</summary> 
+   Необходимые технологии: Docker, Docker-Compose
+
+   <details>
    <summary>При первом запуске необходимо</summary> 
-
-- Клонировать репозиторий и перейти в него в командной строке:
-   ```
-   git clone git@github.com:kkhitalenko/Become_a_PRO
-   ```
-   ```
-   cd Become_a_PRO/infra/
-   ```
-- Создать .env файл и заполнить его по аналогии с файлом .env.example
-- Запустить docker-compose:
-   ```
-   docker-compose up -d --build
-   ```
-- Последовательно выполнить следующие команды:
-   ```
-   docker-compose exec backend python manage.py migrate
-   docker-compose exec backend python manage.py createsuperuser
-   docker-compose exec backend python manage.py collectstatic --no-input 
-   ```
-
-- Выполнить следующую команду с указанием ваших db-user и db-name
-   ```
-   cat becomeapro.sql | docker exec -i BecomeaPRO_postgres psql -U <db-user> -d <db-name>
-   ```
-</details>
-
-<details>
-
+      
+   1. Клонировать репозиторий и перейти в него в командной строке:
+      ```
+      git clone git@github.com:kkhitalenko/Become_a_PRO
+      ```
+      ```
+      cd Become_a_PRO/infra/
+      ```
+   2. Создать .env файл и заполнить его по аналогии с файлом .env.example
+   3. Запустить docker-compose:
+      ```
+      docker-compose up -d --build
+      ```
+   4. Последовательно выполнить следующие команды:
+      ```
+      docker-compose exec backend python manage.py migrate
+      docker-compose exec backend python manage.py createsuperuser
+      docker-compose exec backend python manage.py collectstatic --no-input 
+      ```
+         
+   5. Выполнить следующую команду с указанием ваших db-user и db-name
+      ```
+      cat becomeapro.sql | docker exec -i BecomeaPRO_postgres psql -U <db-user> -d <db-name>
+      ```
+   </details>
+   <details>
    <summary>При повторном запуске</summary> 
-   ```
-   docker-compose up -d 
-   ```
-
+         
+   1. Запустить docker-compose
+      ```
+      docker-compose up -d
+      ```
+   </details>
 </details>
 
 <details>
