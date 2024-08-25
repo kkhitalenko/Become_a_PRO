@@ -3,7 +3,7 @@ services:
   postgres:
     container_name: BecomeaPRO_postgres
     image: postgres:16.4-alpine
-    restart: always
+    restart: on-failure
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
@@ -25,7 +25,7 @@ services:
 
   nginx:
     container_name: BecomeaPRO_nginx
-    image: nginx:1.21.3-alpine
+    image: nginx:1.27.1-alpine
     ports:
       - "80:80"
     volumes:
@@ -35,20 +35,30 @@ services:
     depends_on:
       - backend
 
+
+  # redis:
+  #   container_name: BecomeaPRO_redis
+  #   image: redis:7.4-alpine
+  #   restart: on-failure
+  #   volumes:
+  #     - redis_data:/data
+  #   env_file:
+  #     - .env
+
+
+  bot:
+    container_name: BecomeaPRO_bot
+    build: ../bot/
+    restart: always
+    depends_on:
+      - nginx
+      # - redis
+    env_file:
+      - .env
+
+
 volumes:
   postgres_data:
   static_value:
   media_value:
-  # bot:
-  #   container_name: BecomeaPRO_bot
-  #   build: ../bot/
-  #   restart: always
-  #   depends_on:
-  #     - backend
-
-  # redis:
-  #   container_name: BecomeaPRO_redis
-  #   image: redis:5-alpine
-  #   restart: always
-    # volumes:
-    #   - redis-data:/data
+  # redis_data:

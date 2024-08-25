@@ -4,9 +4,11 @@ WORKDIR /app
 
 RUN pip install poetry
 
-COPY ./ .
+COPY pyproject.toml poetry.lock ./
 
 RUN poetry config virtualenvs.create false
-RUN poetry install
+RUN poetry install --no-dev
+
+COPY ./ .
 
 CMD ["python", "main.py"] 
