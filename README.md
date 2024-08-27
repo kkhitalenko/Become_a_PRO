@@ -19,7 +19,7 @@
 <details>
    <summary>Логика бота</summary> 
    
-![Image alt](https://github.com/kkhitalenko/Become_a_PRO/raw/main/mindmap.PNG)
+![Become_a_PRO_mindmap](https://github.com/kkhitalenko/Become_a_PRO/raw/main/mindmap.PNG)
    
 </details>
 
@@ -49,7 +49,7 @@
       docker-compose exec backend python manage.py collectstatic --no-input 
       ```
          
-   5. Выполнить следующую команду с указанием ваших db-user и db-name
+   5. Наполнить БД, выполнив следующую команду с указанием ваших db-user и db-name
       ```
       cat becomeapro.sql | docker exec -i BecomeaPRO_postgres psql -U <db-user> -d <db-name>
       ```
@@ -66,18 +66,18 @@
 
 <details>
    <summary>Используемые инструменты и технологии</summary> 
-   
-- Poetry
-- Pre-commit(ruff)
+
 - Python
+- Poetry
+- Pre-commit(Ruff)
 - Django, DRF
 - Gunicorn, Nginx
-- Aiogram, Aiohttp
 - Postgres
+- Aiogram, Aiohttp
+- Redis 
 - Docker, Docker Compose
 - Github Actions(CI:flake, isort)
 <!-- Celery --> 
-<!-- Redis --> 
 <!-- Pytest --> 
 
 </details>
