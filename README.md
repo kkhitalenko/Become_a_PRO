@@ -47,11 +47,7 @@
       docker-compose exec backend python manage.py migrate
       docker-compose exec backend python manage.py createsuperuser
       docker-compose exec backend python manage.py collectstatic --no-input 
-      ```
-         
-   5. Наполнить БД, выполнив следующую команду с указанием ваших db-user и db-name
-      ```
-      cat becomeapro.sql | docker exec -i BecomeaPRO_postgres psql -U <db-user> -d <db-name>
+      cat becomeapro.sql | docker exec -i BecomeaPRO_postgres psql -U postgres -d postgres
       ```
    </details>
    <details>
@@ -74,9 +70,9 @@
 - Gunicorn, Nginx
 - Postgres
 - Aiogram, Aiohttp
-- Redis 
 - Docker, Docker Compose
 - Github Actions(CI:flake, isort)
+<!-- Redis  --> 
 <!-- Celery --> 
 <!-- Pytest --> 
 
