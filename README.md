@@ -72,8 +72,6 @@
 - Aiogram, Aiohttp
 - Docker, Docker Compose
 - Github Actions(CI:flake, isort)
-<!-- Redis  --> 
-<!-- Celery --> 
 <!-- Pytest --> 
 
 </details>
