@@ -37,7 +37,10 @@
       ```
       cd Become_a_PRO/infra/
       ```
-   2. Создать .env файл и заполнить его по аналогии с файлом .env.example
+   2. Создать .env файл и заполнить его по аналогии с файлом .env.example. Обязательные для заполнения поля:
+      - SECRET_KEY: необходимо самостоятельно сконфигурировать, например тут https://djecrety.ir/
+      - TOKEN: токен своего бота можно получить у бота @BotFather в Telegram (предварительно бот должен быть создан)
+      - ADMIN_TG_ID: свой Telegram ID можно получить у бота @getmyid_bot в Telegram
    3. Запустить docker-compose:
       ```
       docker-compose up -d --build
