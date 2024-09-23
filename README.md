@@ -61,6 +61,7 @@
       docker-compose up -d
       ```
    </details>
+Админка настроена и доступна по адресу http://127.0.0.1/admin/
 </details>
 
 <details>
